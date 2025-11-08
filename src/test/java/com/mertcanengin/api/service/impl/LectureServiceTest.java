@@ -45,9 +45,17 @@ class LectureServiceTest {
         Lecture lecture = new Lecture();
         lecture.setName(" ");
         lecture.setTeacher(teacher);
+        lecture.setCapacity(20);
 
         assertThrows(GeneralException.class, () -> lectureService.save(lecture));
         verifyNoInteractions(userRepository);
+    }
+
+    @Test
+    void saveThrowsWhenCapacityInvalid() {
+        Lecture lecture = buildLecture();
+        lecture.setCapacity(0);
+        assertThrows(GeneralException.class, () -> lectureService.save(lecture));
     }
 
     @Test
@@ -99,6 +107,7 @@ class LectureServiceTest {
         Lecture lecture = new Lecture();
         lecture.setName("Advanced Math");
         lecture.setTeacher(teacher);
+        lecture.setCapacity(30);
         return lecture;
     }
 }

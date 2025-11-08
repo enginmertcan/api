@@ -1,5 +1,6 @@
 package com.mertcanengin.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,20 +22,32 @@ public class Lecture {
     @Column(nullable = false)
     private String name;
 
+    @Column(length = 1000)
+    private String description;
+
+    @Column(nullable = false)
+    private Integer capacity;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id")
     private User teacher;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_lectures",
-            joinColumns = @JoinColumn(name = "lecture_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
-    )
-    private List<User> students = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Enrollment> enrollments = new ArrayList<>();
+
+    @Transient
+    private Integer teacherId;
 
     @Transient
     public Integer getTeacherId() {
-        return teacher != null ? teacher.getId() : null;
+        if (teacher != null) {
+            return teacher.getId();
+        }
+        return teacherId;
+    }
+
+    public void setTeacherId(Integer teacherId) {
+        this.teacherId = teacherId;
     }
 }

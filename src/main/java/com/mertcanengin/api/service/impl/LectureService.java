@@ -30,6 +30,9 @@ public class LectureService implements ILectureService {
         if (!StringUtils.hasText(lecture.getName())) {
             throw new GeneralException("Lecture name cannot be empty.");
         }
+        if (lecture.getCapacity() == null || lecture.getCapacity() <= 0) {
+            throw new GeneralException("Lecture capacity must be greater than zero.");
+        }
         User teacher = resolveTeacher(lecture);
         lecture.setTeacher(teacher);
         return lectureRepository.save(lecture);

@@ -1,7 +1,10 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.entity.Lecture;
+import com.mertcanengin.api.dto.LectureRequest;
+import com.mertcanengin.api.dto.LectureResponse;
+import com.mertcanengin.api.mapper.LectureMapper;
 import com.mertcanengin.api.service.ILectureService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,27 +16,34 @@ import org.springframework.web.bind.annotation.*;
 public class LectureController {
 
     private final ILectureService lectureService;
+    private final LectureMapper lectureMapper;
 
-    public LectureController(ILectureService lectureService) {
+    public LectureController(ILectureService lectureService, LectureMapper lectureMapper) {
         this.lectureService = lectureService;
+        this.lectureMapper = lectureMapper;
     }
 
     @GetMapping
-    ResponseEntity<Page<Lecture>> getLectures(@RequestParam(defaultValue = "0") Integer page,
-                                              @RequestParam(defaultValue = "10") Integer pageSize) {
+    ResponseEntity<Page<LectureResponse>> getLectures(@RequestParam(defaultValue = "0") Integer page,
+                                                      @RequestParam(defaultValue = "10") Integer pageSize) {
         return ResponseEntity.ok(
                 lectureService.getAll(PageRequest.of(page, pageSize, Sort.by("id").ascending()))
+                        .map(lectureMapper::toResponse)
         );
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<Lecture> getLecture(@PathVariable Integer id) {
-        return ResponseEntity.ok(lectureService.getById(id));
+    ResponseEntity<LectureResponse> getLecture(@PathVariable Integer id) {
+        return ResponseEntity.ok(lectureMapper.toResponse(lectureService.getById(id)));
     }
 
     @PostMapping
-    ResponseEntity<Lecture> createLecture(@RequestBody Lecture lecture) {
-        return ResponseEntity.ok(lectureService.save(lecture));
+    ResponseEntity<LectureResponse> createLecture(@Valid @RequestBody LectureRequest request) {
+        return ResponseEntity.ok(
+                lectureMapper.toResponse(
+                        lectureService.save(lectureMapper.toEntity(request))
+                )
+        );
     }
 
     @DeleteMapping("/{id}")

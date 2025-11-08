@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class EnrollmentController {
         this.enrollmentGradeMapper = enrollmentGradeMapper;
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @PostMapping
     ResponseEntity<EnrollmentResponse> enroll(@Valid @RequestBody EnrollmentRequest request) {
         return ResponseEntity.ok(
@@ -44,27 +46,32 @@ public class EnrollmentController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('STUDENT','ADMIN')")
     @PostMapping("/{id}/drop")
     ResponseEntity<EnrollmentResponse> drop(@PathVariable Integer id) {
         return ResponseEntity.ok(enrollmentMapper.toResponse(enrollmentService.drop(id)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/approve")
     ResponseEntity<EnrollmentResponse> approve(@PathVariable Integer id) {
         return ResponseEntity.ok(enrollmentMapper.toResponse(enrollmentService.approve(id)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{id}/promote")
     ResponseEntity<EnrollmentResponse> promote(@PathVariable Integer id) {
         return ResponseEntity.ok(enrollmentMapper.toResponse(enrollmentService.promoteFromWaitlist(id)));
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/{id}/complete")
     ResponseEntity<EnrollmentResponse> complete(@PathVariable Integer id,
                                                 @Valid @RequestBody EnrollmentCompletionRequest request) {
         return ResponseEntity.ok(enrollmentMapper.toResponse(enrollmentService.complete(id, request.grade())));
     }
 
+    @PreAuthorize("hasRole('TEACHER')")
     @PostMapping("/{id}/grades")
     ResponseEntity<EnrollmentGradeResponse> recordGrade(@PathVariable Integer id,
                                                         @Valid @RequestBody EnrollmentGradeRequest request) {
@@ -82,6 +89,7 @@ public class EnrollmentController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping
     ResponseEntity<Page<EnrollmentResponse>> getEnrollments(@RequestParam(defaultValue = "0") Integer page,
                                                             @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -91,11 +99,13 @@ public class EnrollmentController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping("/lecture/{lectureId}")
     ResponseEntity<List<EnrollmentResponse>> getByLecture(@PathVariable Integer lectureId) {
         return ResponseEntity.ok(enrollmentMapper.toResponseList(enrollmentService.getByLecture(lectureId)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
     @GetMapping("/student/{studentId}")
     ResponseEntity<List<EnrollmentResponse>> getByStudent(@PathVariable Integer studentId) {
         return ResponseEntity.ok(enrollmentMapper.toResponseList(enrollmentService.getByStudent(studentId)));

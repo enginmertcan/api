@@ -12,6 +12,16 @@ CREATE TABLE users (
                        updated_by VARCHAR(255)
 );
 
+CREATE TABLE refresh_tokens (
+                                id SERIAL PRIMARY KEY,
+                                user_id INTEGER NOT NULL,
+                                token VARCHAR(512) NOT NULL UNIQUE,
+                                created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+                                revoked BOOLEAN NOT NULL DEFAULT FALSE,
+                                CONSTRAINT fk_refresh_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 CREATE TABLE lectures (
                           id SERIAL PRIMARY KEY,
                           name VARCHAR(255) NOT NULL,

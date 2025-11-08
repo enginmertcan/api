@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class LectureController {
         this.lectureMapper = lectureMapper;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping
     ResponseEntity<Page<LectureResponse>> getLectures(@RequestParam(defaultValue = "0") Integer page,
                                                       @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -34,11 +36,13 @@ public class LectureController {
         );
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
     @GetMapping("/{id}")
     ResponseEntity<LectureResponse> getLecture(@PathVariable Integer id) {
         return ResponseEntity.ok(lectureMapper.toResponse(lectureService.getById(id)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     ResponseEntity<LectureResponse> createLecture(@Valid @RequestBody LectureRequest request) {
         return ResponseEntity.ok(
@@ -48,6 +52,7 @@ public class LectureController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> deleteLecture(@PathVariable Integer id) {
         lectureService.delete(id);

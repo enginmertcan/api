@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class UserController {
     }
 
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     ResponseEntity<Page<UserResponse>> getUsers(@RequestParam(defaultValue = "0") Integer page,
                                         @RequestParam(defaultValue = "10") Integer pageSize){
@@ -37,21 +39,25 @@ public class UserController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/by-role")
     ResponseEntity<List<UserResponse>> getUsersByRole(@RequestParam Role role){
         return ResponseEntity.ok(userMapper.toResponseList(userService.getUsersByRole(role)));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping("/{id}")
     ResponseEntity<UserResponse> getUser(@PathVariable Integer id){
         return ResponseEntity.ok(userMapper.toResponse(userService.getById(id)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request){
         return ResponseEntity.ok(userMapper.toResponse(userService.save(userMapper.toEntity(request))));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     ResponseEntity<Void> deleteUser(@RequestParam Integer id){
         userService.delete(id);

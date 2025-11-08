@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class GradeComponentController {
         this.gradeComponentMapper = gradeComponentMapper;
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping
     ResponseEntity<?> getComponents(@RequestParam(required = false) Integer lectureId,
                                     @RequestParam(defaultValue = "0") Integer page,
@@ -43,6 +45,7 @@ public class GradeComponentController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @PostMapping
     ResponseEntity<GradeComponentResponse> create(@Valid @RequestBody GradeComponentRequest request) {
         return ResponseEntity.ok(
@@ -52,6 +55,7 @@ public class GradeComponentController {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     ResponseEntity<Void> delete(@PathVariable Integer id) {
         gradeComponentService.delete(id);

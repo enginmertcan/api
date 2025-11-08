@@ -25,8 +25,8 @@ public class JwtService {
         this.expirationMs = expirationMs;
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return buildToken(Map.of(), userDetails, expirationMs);
+    public String generateToken(UserDetails userDetails, Map<String, Object> claims) {
+        return buildToken(claims, userDetails, expirationMs);
     }
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {

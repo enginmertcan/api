@@ -26,5 +26,5 @@ logging:
 
 security:
   jwt:
-    secret: ZGV2ZWxvcGVyLXNlY3JldC1rZXktZm9yLWxvdC1zaWduaW5nLXN0dWZm
-    expiration: 3600000
+    secret: ${JWT_SECRET:change-me}
+    expiration: ${JWT_EXPIRATION:3600000}

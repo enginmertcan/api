@@ -4,6 +4,7 @@ import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Role;
 import com.mertcanengin.api.repository.IUserRepository;
+import com.mertcanengin.api.service.IRefreshTokenService;
 import com.mertcanengin.api.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,14 @@ public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final IRefreshTokenService refreshTokenService;
 
-    public UserService(IUserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(IUserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       IRefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -89,6 +94,7 @@ public class UserService implements IUserService {
         if(!userRepository.existsById(id)){
             throw new GeneralException("User not found with id: " + id);
         }
+        refreshTokenService.revokeUserTokens(id);
         userRepository.deleteById(id);
     }
 }

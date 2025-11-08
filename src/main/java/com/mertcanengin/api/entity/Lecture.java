@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -12,23 +13,15 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-
 public class Lecture {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    @Column
-    private String name;
-
-    @Column
     private Integer id;
 
-    public  Integer getTeacherId() {
-        return teacher.getId();
-    }
+    @Column(nullable = false)
+    private String name;
 
-
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "teacher_id")
     private User teacher;
 
@@ -38,5 +31,10 @@ public class Lecture {
             joinColumns = @JoinColumn(name = "lecture_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
-    private List <User> students;
+    private List<User> students = new ArrayList<>();
+
+    @Transient
+    public Integer getTeacherId() {
+        return teacher != null ? teacher.getId() : null;
+    }
 }

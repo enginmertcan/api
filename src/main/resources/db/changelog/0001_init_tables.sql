@@ -10,7 +10,7 @@ CREATE TABLE users (
 CREATE TABLE lectures (
                           id SERIAL PRIMARY KEY,
                           name VARCHAR(255) NOT NULL,
-                          teacher_id INTEGER NOT NULL UNIQUE,
+                          teacher_id INTEGER NOT NULL,
                           CONSTRAINT fk_teacher_id
                               FOREIGN KEY (teacher_id)
                                   REFERENCES users(id)
@@ -19,6 +19,7 @@ CREATE TABLE lectures (
 CREATE TABLE user_lectures (
                                user_id INTEGER NOT NULL,
                                lecture_id INTEGER NOT NULL,
+                               CONSTRAINT pk_user_lectures PRIMARY KEY (user_id, lecture_id),
                                CONSTRAINT fk_user_id
                                    FOREIGN KEY (user_id)
                                        REFERENCES users(id),

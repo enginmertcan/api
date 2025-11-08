@@ -51,53 +51,46 @@ class EnrollmentServiceTest {
     }
 
     @Test
-    void enrollFailsWhenLectureMissing() {
-        when(lectureRepository.findById(lecture.getId())).thenReturn(Optional.empty());
-        assertThrows(GeneralException.class, () -> enrollmentService.enroll(lecture.getId(), student.getId()));
-    }
-
-    @Test
-    void enrollFailsWhenCapacityFull() {
+    void enrollCreatesPendingRecord() {
         setupHappyPath();
-        when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
-                .thenReturn(2L);
-        assertThrows(GeneralException.class, () -> enrollmentService.enroll(lecture.getId(), student.getId()));
-    }
-
-    @Test
-    void enrollCreatesNewRecord() {
-        setupHappyPath();
-        when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
-                .thenReturn(1L);
         when(enrollmentRepository.save(any(Enrollment.class))).thenAnswer(inv -> {
             Enrollment e = inv.getArgument(0);
             e.setId(99);
             return e;
         });
 
-        Enrollment created = enrollmentService.enroll(lecture.getId(), student.getId());
-        assertEquals(99, created.getId());
-        assertEquals(student.getId(), created.getStudent().getId());
+        Enrollment enrollment = enrollmentService.enroll(lecture.getId(), student.getId());
+        assertEquals(99, enrollment.getId());
+        assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
         verify(enrollmentRepository).save(any(Enrollment.class));
     }
 
     @Test
-    void enrollReactivatesDroppedRecord() {
-        setupHappyPath();
-        Enrollment dropped = new Enrollment();
-        dropped.setId(1);
-        dropped.setLecture(lecture);
-        dropped.setStudent(student);
-        dropped.setStatus(EnrollmentStatus.DROPPED);
-        when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
-                .thenReturn(Optional.of(dropped));
+    void approveMovesToActiveWhenSeatAvailable() {
+        Enrollment pending = enrollmentPending();
+        when(enrollmentRepository.findById(pending.getId())).thenReturn(Optional.of(pending));
         when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
                 .thenReturn(0L);
-        when(enrollmentRepository.save(dropped)).thenReturn(dropped);
+        when(enrollmentRepository.save(pending)).thenReturn(pending);
 
-        Enrollment reactivated = enrollmentService.enroll(lecture.getId(), student.getId());
-        assertEquals(EnrollmentStatus.ACTIVE, reactivated.getStatus());
-        assertNull(reactivated.getGrade());
+        Enrollment approved = enrollmentService.approve(pending.getId());
+        assertEquals(EnrollmentStatus.ACTIVE, approved.getStatus());
+        assertNull(approved.getWaitlistPosition());
+    }
+
+    @Test
+    void approveMovesToWaitlistWhenFull() {
+        Enrollment pending = enrollmentPending();
+        when(enrollmentRepository.findById(pending.getId())).thenReturn(Optional.of(pending));
+        when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
+                .thenReturn((long) lecture.getCapacity());
+        when(enrollmentRepository.findAllByLecture_IdAndStatusOrderByWaitlistPositionAsc(
+                lecture.getId(), EnrollmentStatus.WAITING)).thenReturn(java.util.Collections.emptyList());
+        when(enrollmentRepository.save(pending)).thenReturn(pending);
+
+        Enrollment waitlisted = enrollmentService.approve(pending.getId());
+        assertEquals(EnrollmentStatus.WAITING, waitlisted.getStatus());
+        assertEquals(1, waitlisted.getWaitlistPosition());
     }
 
     @Test
@@ -109,29 +102,21 @@ class EnrollmentServiceTest {
     }
 
     @Test
-    void dropMarksEnrollment() {
+    void completeFailsWhenGradeMissing() {
         Enrollment enrollment = activeEnrollment();
         when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
-        when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
-        Enrollment dropped = enrollmentService.drop(enrollment.getId());
-        assertEquals(EnrollmentStatus.DROPPED, dropped.getStatus());
+        assertThrows(GeneralException.class, () -> enrollmentService.complete(enrollment.getId(), null));
     }
 
     @Test
-    void completeFailsWithInvalidGrade() {
-        Enrollment enrollment = activeEnrollment();
-        when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
-        assertThrows(GeneralException.class, () -> enrollmentService.complete(enrollment.getId(), 150.0));
-    }
-
-    @Test
-    void completeMarksAsCompleted() {
+    void completeUsesProvidedGrade() {
         Enrollment enrollment = activeEnrollment();
         when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
         when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
-        Enrollment completed = enrollmentService.complete(enrollment.getId(), 65.0);
+        Enrollment completed = enrollmentService.complete(enrollment.getId(), 85.0);
         assertEquals(EnrollmentStatus.COMPLETED, completed.getStatus());
-        assertEquals(65.0, completed.getGrade());
+        assertEquals(85.0, completed.getFinalGrade());
+        assertTrue(completed.isPassed());
     }
 
     @Test
@@ -145,6 +130,15 @@ class EnrollmentServiceTest {
         when(userRepository.findById(student.getId())).thenReturn(Optional.of(student));
         when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
                 .thenReturn(Optional.empty());
+    }
+
+    private Enrollment enrollmentPending() {
+        Enrollment enrollment = new Enrollment();
+        enrollment.setId(50);
+        enrollment.setLecture(lecture);
+        enrollment.setStudent(student);
+        enrollment.setStatus(EnrollmentStatus.PENDING_APPROVAL);
+        return enrollment;
     }
 
     private Enrollment activeEnrollment() {

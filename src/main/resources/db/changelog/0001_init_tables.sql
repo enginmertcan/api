@@ -31,8 +31,12 @@ CREATE TABLE enrollments (
                               lecture_id INTEGER NOT NULL,
                               student_id INTEGER NOT NULL,
                               status VARCHAR(32) NOT NULL,
-                              grade NUMERIC(4,2),
+                              grade NUMERIC(5,2),
                               enrolled_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                              approved_at TIMESTAMP WITHOUT TIME ZONE,
+                              completed_at TIMESTAMP WITHOUT TIME ZONE,
+                              waitlist_position INTEGER,
+                              passed BOOLEAN NOT NULL DEFAULT FALSE,
                               created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                               created_by VARCHAR(255),
@@ -96,3 +100,38 @@ CREATE TABLE lecture_schedules (
 
 CREATE INDEX idx_lecture_schedules_classroom ON lecture_schedules(classroom_id);
 CREATE INDEX idx_lecture_schedules_slot ON lecture_schedules(schedule_slot_id);
+
+CREATE TABLE grade_components (
+                                  id SERIAL PRIMARY KEY,
+                                  lecture_id INTEGER NOT NULL,
+                                  name VARCHAR(255) NOT NULL,
+                                  weight NUMERIC(5,2) NOT NULL,
+                                  max_score NUMERIC(5,2) NOT NULL DEFAULT 100,
+                                  created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                  created_by VARCHAR(255),
+                                  updated_by VARCHAR(255),
+                                  CONSTRAINT fk_component_lecture
+                                      FOREIGN KEY (lecture_id)
+                                          REFERENCES lectures(id),
+                                  CONSTRAINT chk_component_weight CHECK (weight > 0 AND weight <= 100),
+                                  CONSTRAINT uq_component_name UNIQUE (lecture_id, name)
+);
+
+CREATE TABLE enrollment_grades (
+                                    id SERIAL PRIMARY KEY,
+                                    enrollment_id INTEGER NOT NULL,
+                                    grade_component_id INTEGER NOT NULL,
+                                    score NUMERIC(5,2) NOT NULL,
+                                    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                    updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                    created_by VARCHAR(255),
+                                    updated_by VARCHAR(255),
+                                    CONSTRAINT fk_grade_enrollment
+                                        FOREIGN KEY (enrollment_id)
+                                            REFERENCES enrollments(id),
+                                    CONSTRAINT fk_grade_component
+                                        FOREIGN KEY (grade_component_id)
+                                            REFERENCES grade_components(id),
+                                    CONSTRAINT uq_enrollment_component UNIQUE (enrollment_id, grade_component_id)
+);

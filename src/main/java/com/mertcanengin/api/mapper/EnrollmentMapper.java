@@ -12,6 +12,7 @@ public interface EnrollmentMapper {
 
     @Mapping(target = "lectureId", expression = "java(enrollment.getLectureId())")
     @Mapping(target = "studentId", expression = "java(enrollment.getStudentId())")
+    @Mapping(target = "grade", source = "finalGrade")
     EnrollmentResponse toResponse(Enrollment enrollment);
 
     List<EnrollmentResponse> toResponseList(List<Enrollment> enrollments);

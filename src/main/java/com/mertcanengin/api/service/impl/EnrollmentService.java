@@ -13,6 +13,7 @@ import com.mertcanengin.api.service.IEnrollmentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,54 +35,72 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public Enrollment enroll(Integer lectureId, Integer studentId) {
-        Lecture lecture = lectureRepository.findById(lectureId)
-                .orElseThrow(() -> new GeneralException("Lecture not found with id: " + lectureId));
-
-        if (lecture.getCapacity() == null || lecture.getCapacity() <= 0) {
-            throw new GeneralException("Lecture capacity must be greater than zero.");
-        }
-
-        User student = userRepository.findById(studentId)
-                .orElseThrow(() -> new GeneralException("Student not found with id: " + studentId));
-
-        if (student.getRole() != Role.STUDENT) {
-            throw new GeneralException("User with id " + studentId + " is not registered as a student.");
-        }
+        Lecture lecture = resolveLecture(lectureId);
+        User student = resolveStudent(studentId);
 
         Enrollment existing = enrollmentRepository.findByLecture_IdAndStudent_Id(lectureId, studentId).orElse(null);
         if (existing != null) {
-            if (existing.getStatus() == EnrollmentStatus.ACTIVE) {
-                throw new GeneralException("Student already enrolled in this lecture.");
-            }
             if (existing.getStatus() == EnrollmentStatus.COMPLETED) {
                 throw new GeneralException("Completed enrollment cannot be reactivated.");
             }
-            return reactivateEnrollment(existing, lecture);
+            if (existing.getStatus() == EnrollmentStatus.DROPPED) {
+                existing.setStatus(EnrollmentStatus.PENDING_APPROVAL);
+                existing.setEnrolledAt(LocalDateTime.now());
+                existing.setFinalGrade(null);
+                existing.setWaitlistPosition(null);
+                return enrollmentRepository.save(existing);
+            }
+            return existing;
         }
-
-        ensureCapacityAvailability(lectureId, lecture.getCapacity());
 
         Enrollment enrollment = new Enrollment();
         enrollment.setLecture(lecture);
         enrollment.setStudent(student);
-        enrollment.setStatus(EnrollmentStatus.ACTIVE);
+        enrollment.setStatus(EnrollmentStatus.PENDING_APPROVAL);
         enrollment.setEnrolledAt(LocalDateTime.now());
         return enrollmentRepository.save(enrollment);
     }
 
-    private Enrollment reactivateEnrollment(Enrollment enrollment, Lecture lecture) {
-        ensureCapacityAvailability(lecture.getId(), lecture.getCapacity());
-        enrollment.setStatus(EnrollmentStatus.ACTIVE);
-        enrollment.setGrade(null);
-        enrollment.setEnrolledAt(LocalDateTime.now());
-        return enrollmentRepository.save(enrollment);
-    }
-
-    private void ensureCapacityAvailability(Integer lectureId, Integer capacity) {
-        long activeCount = enrollmentRepository.countByLecture_IdAndStatus(lectureId, EnrollmentStatus.ACTIVE);
-        if (activeCount >= capacity) {
-            throw new GeneralException("Lecture capacity is full.");
+    @Override
+    @Transactional
+    public Enrollment approve(Integer enrollmentId) {
+        Enrollment enrollment = getById(enrollmentId);
+        if (enrollment.getStatus() != EnrollmentStatus.PENDING_APPROVAL) {
+            throw new GeneralException("Only pending enrollments can be approved.");
         }
+        Lecture lecture = enrollment.getLecture();
+        ensureLectureCapacityConfigured(lecture);
+
+        if (hasAvailableSeat(lecture.getId(), lecture.getCapacity())) {
+            enrollment.setStatus(EnrollmentStatus.ACTIVE);
+            enrollment.setApprovedAt(LocalDateTime.now());
+            enrollment.setWaitlistPosition(null);
+        } else {
+            enrollment.setStatus(EnrollmentStatus.WAITING);
+            enrollment.setApprovedAt(LocalDateTime.now());
+            enrollment.setWaitlistPosition(nextWaitlistPosition(lecture.getId()));
+        }
+        return enrollmentRepository.save(enrollment);
+    }
+
+    @Override
+    @Transactional
+    public Enrollment promoteFromWaitlist(Integer enrollmentId) {
+        Enrollment enrollment = getById(enrollmentId);
+        if (enrollment.getStatus() != EnrollmentStatus.WAITING) {
+            throw new GeneralException("Only waitlisted enrollments can be promoted.");
+        }
+        Lecture lecture = enrollment.getLecture();
+        ensureLectureCapacityConfigured(lecture);
+        if (!hasAvailableSeat(lecture.getId(), lecture.getCapacity())) {
+            throw new GeneralException("No available seats to promote this enrollment.");
+        }
+        enrollment.setStatus(EnrollmentStatus.ACTIVE);
+        enrollment.setWaitlistPosition(null);
+        enrollment.setApprovedAt(LocalDateTime.now());
+        Enrollment saved = enrollmentRepository.save(enrollment);
+        reindexWaitlist(lecture.getId());
+        return saved;
     }
 
     @Override
@@ -93,8 +112,16 @@ public class EnrollmentService implements IEnrollmentService {
         if (enrollment.getStatus() == EnrollmentStatus.COMPLETED) {
             throw new GeneralException("Completed enrollment cannot be dropped.");
         }
+        EnrollmentStatus previousStatus = enrollment.getStatus();
         enrollment.setStatus(EnrollmentStatus.DROPPED);
-        return enrollmentRepository.save(enrollment);
+        enrollment.setWaitlistPosition(null);
+        Enrollment saved = enrollmentRepository.save(enrollment);
+        if (previousStatus == EnrollmentStatus.ACTIVE) {
+            promoteNextFromWaitlist(enrollment.getLecture().getId());
+        } else {
+            reindexWaitlist(enrollment.getLecture().getId());
+        }
+        return saved;
     }
 
     @Override
@@ -106,9 +133,21 @@ public class EnrollmentService implements IEnrollmentService {
         if (grade != null && (grade < 0 || grade > 100)) {
             throw new GeneralException("Grade must be between 0 and 100.");
         }
+
+        if (grade != null) {
+            enrollment.setFinalGrade(grade);
+        }
+
+        if (enrollment.getFinalGrade() == null) {
+            throw new GeneralException("Final grade has not been calculated yet.");
+        }
+
+        enrollment.setPassed(enrollment.getFinalGrade() >= 60.0);
+        enrollment.setCompletedAt(LocalDateTime.now());
         enrollment.setStatus(EnrollmentStatus.COMPLETED);
-        enrollment.setGrade(grade);
-        return enrollmentRepository.save(enrollment);
+        Enrollment saved = enrollmentRepository.save(enrollment);
+        promoteNextFromWaitlist(enrollment.getLecture().getId());
+        return saved;
     }
 
     @Override
@@ -147,9 +186,72 @@ public class EnrollmentService implements IEnrollmentService {
 
     @Override
     public void delete(Integer id) {
-        if (!enrollmentRepository.existsById(id)) {
-            throw new GeneralException("Enrollment not found with id: " + id);
+        Enrollment enrollment = getById(id);
+        EnrollmentStatus previousStatus = enrollment.getStatus();
+        Integer lectureId = enrollment.getLecture().getId();
+        enrollmentRepository.delete(enrollment);
+        if (previousStatus == EnrollmentStatus.ACTIVE) {
+            promoteNextFromWaitlist(lectureId);
+        } else if (previousStatus == EnrollmentStatus.WAITING) {
+            reindexWaitlist(lectureId);
         }
-        enrollmentRepository.deleteById(id);
+    }
+
+    private Lecture resolveLecture(Integer lectureId) {
+        return lectureRepository.findById(lectureId)
+                .orElseThrow(() -> new GeneralException("Lecture not found with id: " + lectureId));
+    }
+
+    private User resolveStudent(Integer studentId) {
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new GeneralException("Student not found with id: " + studentId));
+        if (student.getRole() != Role.STUDENT) {
+            throw new GeneralException("User with id " + studentId + " is not registered as a student.");
+        }
+        return student;
+    }
+
+    private void ensureLectureCapacityConfigured(Lecture lecture) {
+        if (lecture.getCapacity() == null || lecture.getCapacity() <= 0) {
+            throw new GeneralException("Lecture capacity must be greater than zero.");
+        }
+    }
+
+    private boolean hasAvailableSeat(Integer lectureId, Integer capacity) {
+        long activeCount = enrollmentRepository.countByLecture_IdAndStatus(lectureId, EnrollmentStatus.ACTIVE);
+        return activeCount < capacity;
+    }
+
+    private int nextWaitlistPosition(Integer lectureId) {
+        List<Enrollment> waitlist = enrollmentRepository
+                .findAllByLecture_IdAndStatusOrderByWaitlistPositionAsc(lectureId, EnrollmentStatus.WAITING);
+        return waitlist.size() + 1;
+    }
+
+    private void promoteNextFromWaitlist(Integer lectureId) {
+        lectureRepository.findById(lectureId).ifPresent(lecture -> {
+            if (!hasAvailableSeat(lectureId, lecture.getCapacity())) {
+                return;
+            }
+            enrollmentRepository.findFirstByLecture_IdAndStatusOrderByWaitlistPositionAsc(
+                    lectureId, EnrollmentStatus.WAITING
+            ).ifPresent(waiting -> {
+                waiting.setStatus(EnrollmentStatus.ACTIVE);
+                waiting.setWaitlistPosition(null);
+                waiting.setApprovedAt(LocalDateTime.now());
+                enrollmentRepository.save(waiting);
+                reindexWaitlist(lectureId);
+            });
+        });
+    }
+
+    private void reindexWaitlist(Integer lectureId) {
+        List<Enrollment> waitlist = enrollmentRepository
+                .findAllByLecture_IdAndStatusOrderByWaitlistPositionAsc(lectureId, EnrollmentStatus.WAITING);
+        int position = 1;
+        for (Enrollment enrollment : waitlist) {
+            enrollment.setWaitlistPosition(position++);
+            enrollmentRepository.save(enrollment);
+        }
     }
 }

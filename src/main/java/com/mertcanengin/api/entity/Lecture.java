@@ -43,6 +43,10 @@ public class Lecture extends AuditableEntity {
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LectureSchedule> schedules = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GradeComponent> gradeComponents = new ArrayList<>();
+
     @Transient
     private Integer teacherId;
 

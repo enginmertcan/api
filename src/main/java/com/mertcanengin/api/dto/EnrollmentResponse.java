@@ -10,6 +10,10 @@ public record EnrollmentResponse(
         Integer studentId,
         EnrollmentStatus status,
         Double grade,
-        LocalDateTime enrolledAt
+        Integer waitlistPosition,
+        Boolean passed,
+        LocalDateTime enrolledAt,
+        LocalDateTime approvedAt,
+        LocalDateTime completedAt
 ) {
 }

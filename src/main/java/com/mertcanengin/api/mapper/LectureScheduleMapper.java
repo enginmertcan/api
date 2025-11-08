@@ -2,10 +2,7 @@ package com.mertcanengin.api.mapper;
 
 import com.mertcanengin.api.dto.LectureScheduleRequest;
 import com.mertcanengin.api.dto.LectureScheduleResponse;
-import com.mertcanengin.api.entity.Classroom;
-import com.mertcanengin.api.entity.Lecture;
 import com.mertcanengin.api.entity.LectureSchedule;
-import com.mertcanengin.api.entity.ScheduleSlot;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,9 +12,9 @@ import java.util.List;
 public interface LectureScheduleMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lecture", expression = "java(mapLecture(request.lectureId()))")
-    @Mapping(target = "classroom", expression = "java(mapClassroom(request.classroomId()))")
-    @Mapping(target = "scheduleSlot", expression = "java(mapSlot(request.scheduleSlotId()))")
+    @Mapping(target = "lecture", expression = "java(com.mertcanengin.api.mapper.MapperHelpers.mapLecture(request.lectureId()))")
+    @Mapping(target = "classroom", expression = "java(com.mertcanengin.api.mapper.MapperHelpers.mapClassroom(request.classroomId()))")
+    @Mapping(target = "scheduleSlot", expression = "java(com.mertcanengin.api.mapper.MapperHelpers.mapScheduleSlot(request.scheduleSlotId()))")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
@@ -35,31 +32,4 @@ public interface LectureScheduleMapper {
     LectureScheduleResponse toResponse(LectureSchedule schedule);
 
     List<LectureScheduleResponse> toResponseList(List<LectureSchedule> schedules);
-
-    default Lecture mapLecture(Integer lectureId) {
-        if (lectureId == null) {
-            return null;
-        }
-        Lecture lecture = new Lecture();
-        lecture.setId(lectureId);
-        return lecture;
-    }
-
-    default Classroom mapClassroom(Integer classroomId) {
-        if (classroomId == null) {
-            return null;
-        }
-        Classroom classroom = new Classroom();
-        classroom.setId(classroomId);
-        return classroom;
-    }
-
-    default ScheduleSlot mapSlot(Integer slotId) {
-        if (slotId == null) {
-            return null;
-        }
-        ScheduleSlot slot = new ScheduleSlot();
-        slot.setId(slotId);
-        return slot;
-    }
 }

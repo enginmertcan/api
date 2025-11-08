@@ -17,6 +17,7 @@ public interface LectureMapper {
     @Mapping(target = "teacher", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
     @Mapping(target = "schedules", ignore = true)
+    @Mapping(target = "gradeComponents", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

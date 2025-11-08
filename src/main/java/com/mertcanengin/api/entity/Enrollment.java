@@ -10,6 +10,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "enrollments",
@@ -36,13 +38,29 @@ public class Enrollment extends AuditableEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EnrollmentStatus status = EnrollmentStatus.ACTIVE;
+    private EnrollmentStatus status = EnrollmentStatus.PENDING_APPROVAL;
 
-    @Column
-    private Double grade;
+    @Column(name = "grade")
+    private Double finalGrade;
+
+    @Column(name = "waitlist_position")
+    private Integer waitlistPosition;
+
+    @Column(name = "approved_at")
+    private LocalDateTime approvedAt;
+
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
+    @Column(name = "passed", nullable = false)
+    private boolean passed = false;
 
     @Column(name = "enrolled_at", nullable = false)
     private LocalDateTime enrolledAt = LocalDateTime.now();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnrollmentGrade> grades = new ArrayList<>();
 
     public Integer getLectureId() {
         return lecture != null ? lecture.getId() : null;
@@ -55,10 +73,13 @@ public class Enrollment extends AuditableEntity {
     @PrePersist
     public void prePersist() {
         if (status == null) {
-            status = EnrollmentStatus.ACTIVE;
+            status = EnrollmentStatus.PENDING_APPROVAL;
         }
         if (enrolledAt == null) {
             enrolledAt = LocalDateTime.now();
+        }
+        if (approvedAt == null && status == EnrollmentStatus.ACTIVE) {
+            approvedAt = LocalDateTime.now();
         }
     }
 }

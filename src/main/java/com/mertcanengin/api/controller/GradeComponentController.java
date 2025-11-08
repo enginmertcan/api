@@ -4,6 +4,7 @@ import com.mertcanengin.api.dto.GradeComponentRequest;
 import com.mertcanengin.api.dto.GradeComponentResponse;
 import com.mertcanengin.api.mapper.GradeComponentMapper;
 import com.mertcanengin.api.service.IGradeComponentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/grade-components")
+@Tag(name = "Grade Components", description = "Not bileşeni yönetimi")
 public class GradeComponentController {
 
     private final IGradeComponentService gradeComponentService;

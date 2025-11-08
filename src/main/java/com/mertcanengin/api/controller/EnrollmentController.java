@@ -5,6 +5,7 @@ import com.mertcanengin.api.mapper.EnrollmentGradeMapper;
 import com.mertcanengin.api.mapper.EnrollmentMapper;
 import com.mertcanengin.api.service.IEnrollmentGradeService;
 import com.mertcanengin.api.service.IEnrollmentService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/enrollments")
+@Tag(name = "Enrollments", description = "Öğrenci ders kayıt süreçleri")
 public class EnrollmentController {
 
     private final IEnrollmentService enrollmentService;

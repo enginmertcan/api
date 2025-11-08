@@ -4,6 +4,7 @@ import com.mertcanengin.api.dto.LectureRequest;
 import com.mertcanengin.api.dto.LectureResponse;
 import com.mertcanengin.api.mapper.LectureMapper;
 import com.mertcanengin.api.service.ILectureService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/lectures")
+@Tag(name = "Lectures", description = "Ders yönetimi uçları")
 public class LectureController {
 
     private final ILectureService lectureService;

@@ -3,6 +3,7 @@ package com.mertcanengin.api.controller;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Role;
 import com.mertcanengin.api.service.IUserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "Users", description = "Kullanıcı yönetimi uçları")
 public class UserController {
     private final IUserService userService;
 
@@ -48,4 +50,3 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 }
-

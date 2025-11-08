@@ -5,6 +5,7 @@ CREATE TABLE users (
                        identity_no VARCHAR(11) NOT NULL UNIQUE,
                        gender VARCHAR(11) NOT NULL,
                        urole VARCHAR(16) NOT NULL,
+                       password VARCHAR(255) NOT NULL,
                        created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
                        created_by VARCHAR(255),

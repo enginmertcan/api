@@ -23,3 +23,8 @@ management:
 logging:
   pattern:
     level: "%5p [req:%X{requestId}]"
+
+security:
+  jwt:
+    secret: ZGV2ZWxvcGVyLXNlY3JldC1rZXktZm9yLWxvdC1zaWduaW5nLXN0dWZm
+    expiration: 3600000

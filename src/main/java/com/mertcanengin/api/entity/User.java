@@ -1,5 +1,6 @@
 package com.mertcanengin.api.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mertcanengin.api.entity.common.AuditableEntity;
 import com.mertcanengin.api.entity.enums.Gender;
 import com.mertcanengin.api.entity.enums.Role;
@@ -37,4 +38,8 @@ public class User extends AuditableEntity {
     @Column(name = "urole")
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
+    private String password;
 }

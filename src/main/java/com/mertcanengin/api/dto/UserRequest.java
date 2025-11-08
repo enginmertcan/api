@@ -29,6 +29,11 @@ public record UserRequest(
 
         @Schema(description = "Sistem rolü", example = "STUDENT")
         @NotNull
-        Role role
+        Role role,
+
+        @Schema(description = "Kullanıcı parolası", example = "P@ssw0rd!", minLength = 6)
+        @NotBlank
+        @Size(min = 6, max = 128)
+        String password
 ) {
 }

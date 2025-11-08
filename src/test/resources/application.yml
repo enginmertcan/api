@@ -12,3 +12,7 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   liquibase:
     enabled: false
+security:
+  jwt:
+    secret: c2VjcmV0LWZvci10ZXN0LWFwcA==
+    expiration: 3600000

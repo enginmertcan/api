@@ -7,6 +7,7 @@ import com.mertcanengin.api.repository.IUserRepository;
 import com.mertcanengin.api.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository userRepository) {
+    public UserService(IUserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -43,8 +46,23 @@ public class UserService implements IUserService {
             if(userRepository.existsByIdentityNo(user.getIdentityNo())) {
                 throw new GeneralException("A user with this identity number already exists.");
             }
+            encodePassword(user);
+        } else {
+            User existing = getById(user.getId());
+            if (user.getPassword() == null || user.getPassword().isBlank()) {
+                user.setPassword(existing.getPassword());
+            } else if (!user.getPassword().equals(existing.getPassword())) {
+                encodePassword(user);
+            }
         }
         return userRepository.save(user);
+    }
+
+    private void encodePassword(User user) {
+        if (user.getPassword() == null || user.getPassword().length() < 6) {
+            throw new GeneralException("Password must be at least 6 characters long.");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
     }
 
     @Override
@@ -68,9 +86,9 @@ public class UserService implements IUserService {
 
     @Override
     public void delete(Integer id) {
-if(!userRepository.existsById(id)){
-    throw new GeneralException("User not found with id: " + id);
-    }
+        if(!userRepository.existsById(id)){
+            throw new GeneralException("User not found with id: " + id);
+        }
         userRepository.deleteById(id);
     }
 }

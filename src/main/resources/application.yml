@@ -10,3 +10,16 @@ spring:
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
     enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers,threaddump,httpexchanges
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  pattern:
+    level: "%5p [req:%X{requestId}]"

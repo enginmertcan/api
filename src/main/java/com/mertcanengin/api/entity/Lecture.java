@@ -1,9 +1,11 @@
 package com.mertcanengin.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mertcanengin.api.entity.common.AuditableEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -14,7 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Lecture {
+@EqualsAndHashCode(callSuper = true)
+public class Lecture extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

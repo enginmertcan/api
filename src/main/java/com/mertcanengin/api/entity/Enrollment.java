@@ -1,10 +1,12 @@
 package com.mertcanengin.api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mertcanengin.api.entity.common.AuditableEntity;
 import com.mertcanengin.api.entity.enums.EnrollmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -15,7 +17,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Enrollment {
+@EqualsAndHashCode(callSuper = true)
+public class Enrollment extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

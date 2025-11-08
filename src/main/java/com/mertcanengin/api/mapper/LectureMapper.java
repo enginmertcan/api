@@ -16,6 +16,10 @@ public interface LectureMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "teacher", ignore = true)
     @Mapping(target = "enrollments", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
     Lecture toEntity(LectureRequest request);
 
     @AfterMapping

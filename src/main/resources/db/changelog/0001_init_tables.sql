@@ -4,7 +4,11 @@ CREATE TABLE users (
                        surname VARCHAR(255) NOT NULL,
                        identity_no VARCHAR(11) NOT NULL UNIQUE,
                        gender VARCHAR(11) NOT NULL,
-                       urole VARCHAR(16) NOT NULL
+                       urole VARCHAR(16) NOT NULL,
+                       created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                       created_by VARCHAR(255),
+                       updated_by VARCHAR(255)
 );
 
 CREATE TABLE lectures (
@@ -13,6 +17,10 @@ CREATE TABLE lectures (
                           description TEXT,
                           capacity INTEGER NOT NULL CHECK (capacity > 0),
                           teacher_id INTEGER NOT NULL,
+                          created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                          created_by VARCHAR(255),
+                          updated_by VARCHAR(255),
                           CONSTRAINT fk_teacher_id
                               FOREIGN KEY (teacher_id)
                                   REFERENCES users(id)
@@ -25,6 +33,10 @@ CREATE TABLE enrollments (
                              status VARCHAR(32) NOT NULL,
                              grade NUMERIC(4,2),
                              enrolled_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             updated_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                             created_by VARCHAR(255),
+                             updated_by VARCHAR(255),
                              CONSTRAINT uq_enrollment UNIQUE (lecture_id, student_id),
                              CONSTRAINT fk_enrollment_lecture
                                  FOREIGN KEY (lecture_id)

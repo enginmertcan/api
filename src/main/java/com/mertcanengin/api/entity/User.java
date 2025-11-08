@@ -1,10 +1,12 @@
 package com.mertcanengin.api.entity;
 
+import com.mertcanengin.api.entity.common.AuditableEntity;
 import com.mertcanengin.api.entity.enums.Gender;
 import com.mertcanengin.api.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -12,7 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class User {
+@EqualsAndHashCode(callSuper = true)
+public class User extends AuditableEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column

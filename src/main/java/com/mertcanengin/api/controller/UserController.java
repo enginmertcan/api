@@ -1,11 +1,8 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.dto.UserRequest;
-import com.mertcanengin.api.dto.UserResponse;
+import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Role;
-import com.mertcanengin.api.mapper.UserMapper;
 import com.mertcanengin.api.service.IUserService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,36 +15,31 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
     private final IUserService userService;
-    private final UserMapper userMapper;
 
-    public UserController(IUserService userService, UserMapper userMapper) {
+    public UserController(IUserService userService) {
         this.userService = userService;
-        this.userMapper = userMapper;
     }
 
 
     @GetMapping
-    ResponseEntity<Page<UserResponse>> getUsers(@RequestParam(defaultValue = "0") Integer page,
-                                                @RequestParam(defaultValue = "10") Integer pageSize){
-        return ResponseEntity.ok(
-                userService.getAll(PageRequest.of(page,pageSize, Sort.by("id")))
-                        .map(userMapper::toResponse)
-        );
+    ResponseEntity<Page<User>> getUsers(@RequestParam(defaultValue = "0") Integer page,
+                                        @RequestParam(defaultValue = "10") Integer pageSize){
+        return ResponseEntity.ok(userService.getAll(PageRequest.of(page,pageSize, Sort.by("id"))));
     }
 
     @GetMapping("/by-role")
-    ResponseEntity<List<UserResponse>> getUsersByRole(@RequestParam Role role){
-        return ResponseEntity.ok(userMapper.toResponseList(userService.getUsersByRole(role)));
+    ResponseEntity<List<User>> getUsersByRole(@RequestParam Role role){
+        return ResponseEntity.ok(userService.getUsersByRole(role));
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserResponse> getUser(@PathVariable Integer id){
-        return ResponseEntity.ok(userMapper.toResponse(userService.getById(id)));
+    ResponseEntity<User> getUser(@PathVariable Integer id){
+        return ResponseEntity.ok(userService.getById(id));
     }
 
     @PostMapping
-    ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request){
-        return ResponseEntity.ok(userMapper.toResponse(userService.save(userMapper.toEntity(request))));
+    ResponseEntity<User> createUser(@RequestBody User user){
+        return ResponseEntity.ok(userService.save(user));
     }
 
     @DeleteMapping
@@ -56,3 +48,4 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 }
+

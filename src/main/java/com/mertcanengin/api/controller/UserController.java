@@ -39,7 +39,7 @@ public class UserController {
         );
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping("/by-role")
     ResponseEntity<List<UserResponse>> getUsersByRole(@RequestParam Role role){
         return ResponseEntity.ok(userMapper.toResponseList(userService.getUsersByRole(role)));

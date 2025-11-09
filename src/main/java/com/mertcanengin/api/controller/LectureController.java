@@ -42,7 +42,7 @@ public class LectureController {
         return ResponseEntity.ok(lectureMapper.toResponse(lectureService.getById(id)));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @PostMapping
     ResponseEntity<LectureResponse> createLecture(@Valid @RequestBody LectureRequest request) {
         return ResponseEntity.ok(

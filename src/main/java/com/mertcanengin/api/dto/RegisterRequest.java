@@ -1,6 +1,7 @@
 package com.mertcanengin.api.dto;
 
 import com.mertcanengin.api.entity.enums.Gender;
+import com.mertcanengin.api.entity.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +26,9 @@ public record RegisterRequest(
         @Schema(description = "Cinsiyet bilgisi", example = "FEMALE")
         @NotNull
         Gender gender,
+
+        @Schema(description = "Hesap rolü", example = "STUDENT", defaultValue = "STUDENT")
+        Role role,
 
         @Schema(description = "En az 6 karakterlik parola", example = "P@ssw0rd", minLength = 6)
         @NotBlank

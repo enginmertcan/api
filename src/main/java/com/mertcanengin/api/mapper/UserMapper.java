@@ -25,10 +25,14 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
-    @Mapping(target = "role", expression = "java(Role.STUDENT)")
+    @Mapping(target = "role", expression = "java(resolveRole(request))")
     User fromRegister(RegisterRequest request);
 
     UserResponse toResponse(User user);
 
     List<UserResponse> toResponseList(List<User> users);
+
+    default Role resolveRole(RegisterRequest request) {
+        return request.role() != null ? request.role() : Role.STUDENT;
+    }
 }

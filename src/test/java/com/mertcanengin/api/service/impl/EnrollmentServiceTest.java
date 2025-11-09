@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -115,7 +116,7 @@ class EnrollmentServiceTest {
         when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
         Enrollment completed = enrollmentService.complete(enrollment.getId(), 85.0);
         assertEquals(EnrollmentStatus.COMPLETED, completed.getStatus());
-        assertEquals(85.0, completed.getFinalGrade());
+        assertEquals(BigDecimal.valueOf(85.0).setScale(2), completed.getFinalGrade());
         assertTrue(completed.isPassed());
     }
 

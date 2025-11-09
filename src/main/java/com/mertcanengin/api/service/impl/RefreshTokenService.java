@@ -10,6 +10,7 @@ import com.mertcanengin.api.service.IRefreshTokenService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
@@ -32,6 +33,7 @@ public class RefreshTokenService implements IRefreshTokenService {
     }
 
     @Override
+    @Transactional
     public String createToken(UserDetails userDetails) {
         User user = resolveUser(userDetails);
         revokeUserTokens(user.getId());
@@ -44,6 +46,7 @@ public class RefreshTokenService implements IRefreshTokenService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails validateAndGetUser(String token) {
         RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new GeneralException("Refresh token not found."));
@@ -54,6 +57,7 @@ public class RefreshTokenService implements IRefreshTokenService {
     }
 
     @Override
+    @Transactional
     public String rotateToken(UserDetails userDetails, String oldToken) {
         refreshTokenRepository.findByToken(oldToken).ifPresent(token -> {
             token.setRevoked(true);
@@ -63,8 +67,9 @@ public class RefreshTokenService implements IRefreshTokenService {
     }
 
     @Override
+    @Transactional
     public void revokeUserTokens(Integer userId) {
-        refreshTokenRepository.deleteByUserId(userId);
+        refreshTokenRepository.deleteAllByUserId(userId);
     }
 
     private User resolveUser(UserDetails userDetails) {

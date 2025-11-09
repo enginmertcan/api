@@ -1,8 +1,7 @@
 package com.mertcanengin.api.entity.enums;
 
 public enum Role {
-
-    STUDENT,
-
-    TEACHER
+    ADMIN,
+    TEACHER,
+    STUDENT
 }

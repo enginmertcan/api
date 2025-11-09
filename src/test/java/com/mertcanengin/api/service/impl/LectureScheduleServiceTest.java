@@ -77,7 +77,8 @@ class LectureScheduleServiceTest {
         LectureSchedule schedule = buildSchedule();
         mockHappyPath();
         when(lectureScheduleRepository.existsClassroomConflict(eq(classroom.getId()),
-                eq(slot.getDayOfWeek()), eq(slot.getStartTime()), eq(slot.getEndTime()), isNull()))
+                eq(slot.getDayOfWeek()), eq(slot.getStartTime()), eq(slot.getEndTime()),
+                any(), any(), isNull()))
                 .thenReturn(true);
 
         assertThrows(GeneralException.class, () -> lectureScheduleService.schedule(schedule));
@@ -87,9 +88,9 @@ class LectureScheduleServiceTest {
     void scheduleFailsWhenTeacherConflict() {
         LectureSchedule schedule = buildSchedule();
         mockHappyPath();
-        when(lectureScheduleRepository.existsClassroomConflict(any(), any(), any(), any(), any())).thenReturn(false);
+        when(lectureScheduleRepository.existsClassroomConflict(any(), any(), any(), any(), any(), any(), any())).thenReturn(false);
         when(lectureScheduleRepository.existsTeacherConflict(eq(lecture.getTeacher().getId()),
-                eq(slot.getDayOfWeek()), eq(slot.getStartTime()), eq(slot.getEndTime()), isNull()))
+                eq(slot.getDayOfWeek()), eq(slot.getStartTime()), eq(slot.getEndTime()), any(), any(), isNull()))
                 .thenReturn(true);
 
         assertThrows(GeneralException.class, () -> lectureScheduleService.schedule(schedule));
@@ -99,8 +100,8 @@ class LectureScheduleServiceTest {
     void schedulePersistsWhenNoConflicts() {
         LectureSchedule schedule = buildSchedule();
         mockHappyPath();
-        when(lectureScheduleRepository.existsClassroomConflict(any(), any(), any(), any(), any())).thenReturn(false);
-        when(lectureScheduleRepository.existsTeacherConflict(any(), any(), any(), any(), any())).thenReturn(false);
+        when(lectureScheduleRepository.existsClassroomConflict(any(), any(), any(), any(), any(), any(), any())).thenReturn(false);
+        when(lectureScheduleRepository.existsTeacherConflict(any(), any(), any(), any(), any(), any(), any())).thenReturn(false);
         when(lectureScheduleRepository.save(any(LectureSchedule.class))).thenAnswer(invocation -> {
             LectureSchedule saved = invocation.getArgument(0);
             saved.setId(42);

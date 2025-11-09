@@ -45,10 +45,12 @@ public class LectureScheduleService implements ILectureScheduleService {
         Lecture lecture = resolveLecture(lectureSchedule);
         Classroom classroom = resolveClassroom(lectureSchedule);
         ScheduleSlot scheduleSlot = resolveSlot(lectureSchedule);
-        validateDateRange(lectureSchedule.getStartDate(), lectureSchedule.getEndDate());
+        LocalDate startDate = lectureSchedule.getStartDate();
+        LocalDate endDate = lectureSchedule.getEndDate();
+        validateDateRange(startDate, endDate);
 
         Integer excludeId = lectureSchedule.getId();
-        ensureNoConflicts(classroom.getId(), lecture.getTeacher().getId(), scheduleSlot, excludeId);
+        ensureNoConflicts(classroom.getId(), lecture.getTeacher().getId(), scheduleSlot, startDate, endDate, excludeId);
 
         lectureSchedule.setLecture(lecture);
         lectureSchedule.setClassroom(classroom);
@@ -93,15 +95,20 @@ public class LectureScheduleService implements ILectureScheduleService {
         }
     }
 
-    private void ensureNoConflicts(Integer classroomId, Integer teacherId, ScheduleSlot slot, Integer excludeId) {
+    private void ensureNoConflicts(Integer classroomId,
+                                   Integer teacherId,
+                                   ScheduleSlot slot,
+                                   LocalDate startDate,
+                                   LocalDate endDate,
+                                   Integer excludeId) {
         boolean classroomConflict = lectureScheduleRepository.existsClassroomConflict(
-                classroomId, slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime(), excludeId);
+                classroomId, slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime(), startDate, endDate, excludeId);
         if (classroomConflict) {
             throw new GeneralException("Classroom already has a lecture at this time.");
         }
 
         boolean teacherConflict = lectureScheduleRepository.existsTeacherConflict(
-                teacherId, slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime(), excludeId);
+                teacherId, slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime(), startDate, endDate, excludeId);
         if (teacherConflict) {
             throw new GeneralException("Teacher already has a lecture at this time.");
         }

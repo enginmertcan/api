@@ -89,7 +89,7 @@ public class EnrollmentController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
     @GetMapping
     ResponseEntity<Page<EnrollmentResponse>> getEnrollments(@RequestParam(defaultValue = "0") Integer page,
                                                             @RequestParam(defaultValue = "10") Integer pageSize) {
@@ -99,7 +99,7 @@ public class EnrollmentController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
     @GetMapping("/lecture/{lectureId}")
     ResponseEntity<List<EnrollmentResponse>> getByLecture(@PathVariable Integer lectureId) {
         return ResponseEntity.ok(enrollmentMapper.toResponseList(enrollmentService.getByLecture(lectureId)));

@@ -26,7 +26,7 @@ public class LectureController {
         this.lectureMapper = lectureMapper;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
     @GetMapping
     ResponseEntity<Page<LectureResponse>> getLectures(@RequestParam(defaultValue = "0") Integer page,
                                                       @RequestParam(defaultValue = "10") Integer pageSize) {

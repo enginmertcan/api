@@ -29,7 +29,7 @@ public class GradeComponentController {
         this.gradeComponentMapper = gradeComponentMapper;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
     @GetMapping
     ResponseEntity<?> getComponents(@RequestParam(required = false) Integer lectureId,
                                     @RequestParam(defaultValue = "0") Integer page,

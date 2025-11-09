@@ -15,7 +15,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 @Configuration
 @EnableMethodSecurity
@@ -31,17 +32,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   HandlerMappingIntrospector introspector) throws Exception {
+        MvcRequestMatcher.Builder mvc = new MvcRequestMatcher.Builder(introspector);
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                new AntPathRequestMatcher("/api/auth/**"),
-                                new AntPathRequestMatcher("/v3/api-docs"),
-                                new AntPathRequestMatcher("/v3/api-docs/**"),
-                                new AntPathRequestMatcher("/swagger-ui/**"),
-                                new AntPathRequestMatcher("/swagger-ui.html"),
-                                new AntPathRequestMatcher("/actuator/health")
+                                mvc.pattern("/api/auth/**"),
+                                mvc.pattern("/v3/api-docs"),
+                                mvc.pattern("/v3/api-docs/**"),
+                                mvc.pattern("/swagger-ui/**"),
+                                mvc.pattern("/swagger-ui.html"),
+                                mvc.pattern("/actuator/health")
                         ).permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())

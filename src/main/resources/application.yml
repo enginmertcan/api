@@ -1,15 +1,22 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/lecture-management-db
-    username: postgres
-    password: password
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres?sslmode=require&prepareThreshold=0}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres.hqcvezmtckpjlgpsnfwi}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-init-sql: 'SET statement_timeout TO 0; SET search_path TO lecture_api, public'
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        default_schema: lecture_api
   liquibase:
     change-log: classpath:db/changelog/changelog.xml
     enabled: true
+    default-schema: lecture_api
+    liquibase-schema: public
 
 management:
   endpoints:

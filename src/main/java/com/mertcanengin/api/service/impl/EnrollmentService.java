@@ -15,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -135,14 +137,14 @@ public class EnrollmentService implements IEnrollmentService {
         }
 
         if (grade != null) {
-            enrollment.setFinalGrade(grade);
+            enrollment.setFinalGrade(BigDecimal.valueOf(grade).setScale(2, RoundingMode.HALF_UP));
         }
 
         if (enrollment.getFinalGrade() == null) {
             throw new GeneralException("Final grade has not been calculated yet.");
         }
 
-        enrollment.setPassed(enrollment.getFinalGrade() >= 60.0);
+        enrollment.setPassed(enrollment.getFinalGrade().doubleValue() >= 60.0);
         enrollment.setCompletedAt(LocalDateTime.now());
         enrollment.setStatus(EnrollmentStatus.COMPLETED);
         Enrollment saved = enrollmentRepository.save(enrollment);

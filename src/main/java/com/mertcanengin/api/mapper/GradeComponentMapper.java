@@ -18,9 +18,13 @@ public interface GradeComponentMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "weight", expression = "java(new java.math.BigDecimal(request.weight()).setScale(2, java.math.RoundingMode.HALF_UP))")
+    @Mapping(target = "maxScore", expression = "java(new java.math.BigDecimal(request.maxScore()).setScale(2, java.math.RoundingMode.HALF_UP))")
     GradeComponent toEntity(GradeComponentRequest request);
 
     @Mapping(target = "lectureId", expression = "java(component.getLecture().getId())")
+    @Mapping(target = "weight", expression = "java(component.getWeight().doubleValue())")
+    @Mapping(target = "maxScore", expression = "java(component.getMaxScore().doubleValue())")
     GradeComponentResponse toResponse(GradeComponent component);
 
     List<GradeComponentResponse> toResponseList(List<GradeComponent> components);

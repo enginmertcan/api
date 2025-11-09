@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,11 +32,11 @@ public class GradeComponent extends AuditableEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private Double weight;
+    @Column(nullable = false, precision = 5, scale = 2)
+    private BigDecimal weight;
 
-    @Column(name = "max_score", nullable = false)
-    private Double maxScore = 100d;
+    @Column(name = "max_score", nullable = false, precision = 5, scale = 2)
+    private BigDecimal maxScore = BigDecimal.valueOf(100).setScale(2);
 
     @JsonIgnore
     @OneToMany(mappedBy = "gradeComponent", cascade = CascadeType.ALL, orphanRemoval = true)

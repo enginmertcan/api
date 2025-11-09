@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -75,12 +77,14 @@ public class GradeComponentService implements IGradeComponentService {
     }
 
     private void validateRequest(GradeComponent component, Lecture lecture) {
-        if (component.getWeight() == null || component.getWeight() <= 0 || component.getWeight() > 100) {
+        if (component.getWeight() == null || component.getWeight().doubleValue() <= 0 || component.getWeight().doubleValue() > 100) {
             throw new GeneralException("Grade component weight must be between 0 and 100.");
         }
-        if (component.getMaxScore() == null || component.getMaxScore() <= 0) {
+        if (component.getMaxScore() == null || component.getMaxScore().doubleValue() <= 0) {
             throw new GeneralException("Grade component max score must be greater than zero.");
         }
+        component.setWeight(component.getWeight().setScale(2, RoundingMode.HALF_UP));
+        component.setMaxScore(component.getMaxScore().setScale(2, RoundingMode.HALF_UP));
         if (component.getId() == null &&
                 gradeComponentRepository.existsByLectureIdAndNameIgnoreCase(lecture.getId(), component.getName())) {
             throw new GeneralException("Grade component name already exists for this lecture.");
@@ -89,20 +93,20 @@ public class GradeComponentService implements IGradeComponentService {
         ensureTotalWeightValid(lecture.getId(), component.getId(), component.getWeight());
     }
 
-    private void ensureTotalWeightValid(Integer lectureId, Integer componentId, Double newWeight) {
+    private void ensureTotalWeightValid(Integer lectureId, Integer componentId, BigDecimal newWeight) {
         List<GradeComponent> components = gradeComponentRepository.findAllByLectureId(lectureId);
         double total = components.stream()
-                .mapToDouble(GradeComponent::getWeight)
+                .mapToDouble(gc -> gc.getWeight().doubleValue())
                 .sum();
         if (componentId != null) {
             total -= components.stream()
                     .filter(c -> c.getId().equals(componentId))
                     .findFirst()
-                    .map(GradeComponent::getWeight)
+                    .map(gc -> gc.getWeight().doubleValue())
                     .orElse(0.0);
         }
         if (newWeight != null) {
-            total += newWeight;
+            total += newWeight.doubleValue();
         }
         if (total > 100.0 + 1e-6) {
             throw new GeneralException("Total weight of grade components cannot exceed 100.");

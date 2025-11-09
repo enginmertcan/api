@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "enrollment_grades",
         uniqueConstraints = @UniqueConstraint(columnNames = {"enrollment_id", "grade_component_id"}))
@@ -28,6 +30,6 @@ public class EnrollmentGrade extends AuditableEntity {
     @JoinColumn(name = "grade_component_id")
     private GradeComponent gradeComponent;
 
-    @Column(nullable = false)
-    private Double score;
+    @Column(nullable = false, precision = 5, scale = 2)
+    private BigDecimal score;
 }

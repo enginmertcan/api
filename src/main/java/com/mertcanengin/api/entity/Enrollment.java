@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,8 @@ public class Enrollment extends AuditableEntity {
     @Column(nullable = false)
     private EnrollmentStatus status = EnrollmentStatus.PENDING_APPROVAL;
 
-    @Column(name = "grade")
-    private Double finalGrade;
+    @Column(name = "grade", precision = 5, scale = 2)
+    private BigDecimal finalGrade;
 
     @Column(name = "waitlist_position")
     private Integer waitlistPosition;

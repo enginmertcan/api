@@ -13,6 +13,7 @@ public interface EnrollmentGradeMapper {
     @Mapping(target = "enrollmentId", expression = "java(grade.getEnrollment().getId())")
     @Mapping(target = "gradeComponentId", expression = "java(grade.getGradeComponent().getId())")
     @Mapping(target = "componentName", expression = "java(grade.getGradeComponent().getName())")
+    @Mapping(target = "score", expression = "java(grade.getScore() != null ? grade.getScore().doubleValue() : null)")
     EnrollmentGradeResponse toResponse(EnrollmentGrade grade);
 
     List<EnrollmentGradeResponse> toResponseList(List<EnrollmentGrade> grades);

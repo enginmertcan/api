@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -46,7 +48,7 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
             throw new GeneralException("Grade component does not belong to the same lecture.");
         }
 
-        if (score < 0 || score > component.getMaxScore()) {
+        if (score < 0 || score > component.getMaxScore().doubleValue()) {
             throw new GeneralException("Score must be between 0 and " + component.getMaxScore());
         }
 
@@ -55,7 +57,7 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
                 .orElse(new EnrollmentGrade());
         grade.setEnrollment(enrollment);
         grade.setGradeComponent(component);
-        grade.setScore(score);
+        grade.setScore(BigDecimal.valueOf(score).setScale(2, RoundingMode.HALF_UP));
 
         EnrollmentGrade saved = enrollmentGradeRepository.save(grade);
         recalculateFinalGrade(enrollment);
@@ -73,14 +75,14 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
         double totalScore = 0;
 
         for (GradeComponent component : components) {
-            totalWeight += component.getWeight();
+            totalWeight += component.getWeight().doubleValue();
             EnrollmentGrade enrollmentGrade = grades.stream()
                     .filter(g -> g.getGradeComponent().getId().equals(component.getId()))
                     .findFirst()
                     .orElse(null);
             if (enrollmentGrade != null) {
-                double normalized = enrollmentGrade.getScore() / component.getMaxScore();
-                totalScore += normalized * component.getWeight();
+                double normalized = enrollmentGrade.getScore().doubleValue() / component.getMaxScore().doubleValue();
+                totalScore += normalized * component.getWeight().doubleValue();
             }
         }
 
@@ -89,8 +91,8 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
         }
 
         double finalGrade = (totalScore / totalWeight) * 100.0;
-        enrollment.setFinalGrade(Math.round(finalGrade * 100.0) / 100.0);
-        enrollment.setPassed(enrollment.getFinalGrade() != null && enrollment.getFinalGrade() >= 60.0);
+        enrollment.setFinalGrade(BigDecimal.valueOf(finalGrade).setScale(2, RoundingMode.HALF_UP));
+        enrollment.setPassed(enrollment.getFinalGrade() != null && enrollment.getFinalGrade().doubleValue() >= 60.0);
         enrollmentRepository.save(enrollment);
     }
 

@@ -17,9 +17,6 @@
         <module name="NoLineWrap"/>
         <module name="LeftCurly"/>
         <module name="RightCurly"/>
-        <module name="LineLength">
-            <property name="max" value="140"/>
-        </module>
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
             <property name="braceAdjustment" value="0"/>
@@ -27,5 +24,8 @@
         </module>
         <module name="MethodParamPad"/>
         <module name="ParenPad"/>
+    </module>
+    <module name="LineLength">
+        <property name="max" value="140"/>
     </module>
 </module>

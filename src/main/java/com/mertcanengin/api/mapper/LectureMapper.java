@@ -30,6 +30,8 @@ public interface LectureMapper {
     }
 
     @Mapping(target = "teacherId", expression = "java(lecture.getTeacherId())")
+    @Mapping(target = "teacherName", expression = "java(lecture.getTeacher() != null ? lecture.getTeacher().getName() + \" \" + lecture.getTeacher().getSurname() : null)")
+    @Mapping(target = "teacherIdentityNo", expression = "java(lecture.getTeacher() != null ? lecture.getTeacher().getIdentityNo() : null)")
     LectureResponse toResponse(Lecture lecture);
 
     List<LectureResponse> toResponseList(List<Lecture> lectures);

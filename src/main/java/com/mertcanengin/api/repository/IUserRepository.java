@@ -14,4 +14,5 @@ public interface IUserRepository extends JpaRepository<User,Integer> {
     List<User> findAllByRole(Role role);
     List <User> findAllByRoleAndIdIsNotIn(Role role, List<Integer> idList);
     Optional<User> findByIdentityNo(String identityNo);
+    long countByRole(Role role);
 }

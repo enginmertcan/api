@@ -16,6 +16,12 @@ public record LectureResponse(
         Integer capacity,
 
         @Schema(description = "Öğretmen ID", example = "5")
-        Integer teacherId
+        Integer teacherId,
+
+        @Schema(description = "Öğretmen adı soyadı", example = "Ayşe Kaplan")
+        String teacherName,
+
+        @Schema(description = "Öğretmenin T.C. kimlik numarası", example = "80000000001")
+        String teacherIdentityNo
 ) {
 }

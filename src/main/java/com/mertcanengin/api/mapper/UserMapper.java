@@ -1,8 +1,10 @@
 package com.mertcanengin.api.mapper;
 
+import com.mertcanengin.api.dto.RegisterRequest;
 import com.mertcanengin.api.dto.UserRequest;
 import com.mertcanengin.api.dto.UserResponse;
 import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.entity.enums.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -17,6 +19,14 @@ public interface UserMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     User toEntity(UserRequest request);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "createdBy", ignore = true)
+    @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "role", expression = "java(Role.STUDENT)")
+    User fromRegister(RegisterRequest request);
 
     UserResponse toResponse(User user);
 

@@ -3,8 +3,12 @@ package com.mertcanengin.api.controller;
 import com.mertcanengin.api.dto.AuthRequest;
 import com.mertcanengin.api.dto.AuthResponse;
 import com.mertcanengin.api.dto.RefreshTokenRequest;
+import com.mertcanengin.api.dto.RegisterRequest;
 import com.mertcanengin.api.security.JwtService;
+import com.mertcanengin.api.security.UserPrincipal;
+import com.mertcanengin.api.service.IUserService;
 import com.mertcanengin.api.service.IRefreshTokenService;
+import com.mertcanengin.api.mapper.UserMapper;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +31,19 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final IRefreshTokenService refreshTokenService;
+    private final IUserService userService;
+    private final UserMapper userMapper;
 
     public AuthController(AuthenticationManager authenticationManager,
                           JwtService jwtService,
-                          IRefreshTokenService refreshTokenService) {
+                          IRefreshTokenService refreshTokenService,
+                          IUserService userService,
+                          UserMapper userMapper) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.refreshTokenService = refreshTokenService;
+        this.userService = userService;
+        this.userMapper = userMapper;
     }
 
     @PostMapping("/login")
@@ -53,5 +63,13 @@ public class AuthController {
         String accessToken = jwtService.generateToken(userDetails, Map.of("role", userDetails.getAuthorities()));
         String newRefreshToken = refreshTokenService.rotateToken(userDetails, request.refreshToken());
         return ResponseEntity.ok(new AuthResponse(accessToken, newRefreshToken));
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        UserDetails userDetails = new UserPrincipal(userService.save(userMapper.fromRegister(request)));
+        String accessToken = jwtService.generateToken(userDetails, Map.of("role", userDetails.getAuthorities()));
+        String refreshToken = refreshTokenService.createToken(userDetails);
+        return ResponseEntity.ok(new AuthResponse(accessToken, refreshToken));
     }
 }

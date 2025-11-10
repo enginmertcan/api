@@ -31,9 +31,11 @@ public record UserRequest(
         @NotNull
         Role role,
 
-        @Schema(description = "Kullanıcı parolası", example = "P@ssw0rd!", minLength = 6)
+        @Schema(description = "Kullanıcı parolası", example = "Trend123!", minLength = 8)
         @NotBlank
-        @Size(min = 6, max = 128)
+        @Size(min = 8, max = 128)
+        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).+$",
+                message = "Parola en az bir büyük harf, bir küçük harf, bir rakam ve bir özel karakter içermelidir.")
         String password
 ) {
 }

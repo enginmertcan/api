@@ -16,9 +16,15 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 public class UserService implements IUserService {
+
+    private static final Pattern STRONG_PASSWORD_PATTERN =
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{8,}$");
+    private static final String PASSWORD_POLICY_MESSAGE =
+            "Password must be at least 8 characters and include upper, lower, numeric and special characters.";
 
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -73,10 +79,11 @@ public class UserService implements IUserService {
     }
 
     private void encodePassword(User user) {
-        if (user.getPassword() == null || user.getPassword().length() < 6) {
-            throw new GeneralException("Password must be at least 6 characters long.");
+        String rawPassword = user.getPassword();
+        if (rawPassword == null || rawPassword.isBlank() || !STRONG_PASSWORD_PATTERN.matcher(rawPassword).matches()) {
+            throw new GeneralException(PASSWORD_POLICY_MESSAGE);
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(rawPassword));
     }
 
     @Override

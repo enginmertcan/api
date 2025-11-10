@@ -22,8 +22,10 @@ public interface ILectureScheduleRepository extends JpaRepository<LectureSchedul
               AND ls.scheduleSlot.dayOfWeek = :dayOfWeek
               AND ls.scheduleSlot.startTime < :endTime
               AND ls.scheduleSlot.endTime > :startTime
-              AND ( (ls.startDate IS NULL OR :endDate IS NULL OR ls.startDate <= :endDate)
-                    AND (ls.endDate IS NULL OR :startDate IS NULL OR ls.endDate >= :startDate) )
+              AND (
+                    (ls.startDate IS NULL OR ls.startDate <= :endDate)
+                AND (ls.endDate IS NULL OR ls.endDate >= :startDate)
+                  )
             """)
     boolean existsClassroomConflict(@Param("classroomId") Integer classroomId,
                                     @Param("dayOfWeek") DayOfWeek dayOfWeek,
@@ -33,14 +35,6 @@ public interface ILectureScheduleRepository extends JpaRepository<LectureSchedul
                                     @Param("endDate") LocalDate endDate,
                                     @Param("excludeId") Integer excludeId);
 
-    default boolean existsClassroomConflict(Integer classroomId,
-                                            DayOfWeek dayOfWeek,
-                                            LocalTime startTime,
-                                            LocalTime endTime,
-                                            Integer excludeId) {
-        return existsClassroomConflict(classroomId, dayOfWeek, startTime, endTime, null, null, excludeId);
-    }
-
     @Query("""
             SELECT CASE WHEN COUNT(ls) > 0 THEN true ELSE false END
             FROM LectureSchedule ls
@@ -49,8 +43,10 @@ public interface ILectureScheduleRepository extends JpaRepository<LectureSchedul
               AND ls.scheduleSlot.dayOfWeek = :dayOfWeek
               AND ls.scheduleSlot.startTime < :endTime
               AND ls.scheduleSlot.endTime > :startTime
-              AND ( (ls.startDate IS NULL OR :endDate IS NULL OR ls.startDate <= :endDate)
-                    AND (ls.endDate IS NULL OR :startDate IS NULL OR ls.endDate >= :startDate) )
+              AND (
+                    (ls.startDate IS NULL OR ls.startDate <= :endDate)
+                AND (ls.endDate IS NULL OR ls.endDate >= :startDate)
+                  )
             """)
     boolean existsTeacherConflict(@Param("teacherId") Integer teacherId,
                                   @Param("dayOfWeek") DayOfWeek dayOfWeek,
@@ -59,14 +55,6 @@ public interface ILectureScheduleRepository extends JpaRepository<LectureSchedul
                                   @Param("startDate") LocalDate startDate,
                                   @Param("endDate") LocalDate endDate,
                                   @Param("excludeId") Integer excludeId);
-
-    default boolean existsTeacherConflict(Integer teacherId,
-                                          DayOfWeek dayOfWeek,
-                                          LocalTime startTime,
-                                          LocalTime endTime,
-                                          Integer excludeId) {
-        return existsTeacherConflict(teacherId, dayOfWeek, startTime, endTime, null, null, excludeId);
-    }
 
     List<LectureSchedule> findAllByLectureId(Integer lectureId);
 

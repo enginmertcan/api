@@ -15,10 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 
 @Service
 public class LectureScheduleService implements ILectureScheduleService {
+
+    private static final LocalDate OPEN_START = LocalDate.of(1900, Month.JANUARY, 1);
+    private static final LocalDate OPEN_END = LocalDate.of(2100, Month.DECEMBER, 31);
 
     private final ILectureScheduleRepository lectureScheduleRepository;
     private final ILectureRepository lectureRepository;
@@ -101,14 +105,29 @@ public class LectureScheduleService implements ILectureScheduleService {
                                    LocalDate startDate,
                                    LocalDate endDate,
                                    Integer excludeId) {
+        LocalDate normalizedStart = startDate != null ? startDate : OPEN_START;
+        LocalDate normalizedEnd = endDate != null ? endDate : OPEN_END;
+
         boolean classroomConflict = lectureScheduleRepository.existsClassroomConflict(
-                classroomId, slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime(), startDate, endDate, excludeId);
+                classroomId,
+                slot.getDayOfWeek(),
+                slot.getStartTime(),
+                slot.getEndTime(),
+                normalizedStart,
+                normalizedEnd,
+                excludeId);
         if (classroomConflict) {
             throw new GeneralException("Classroom already has a lecture at this time.");
         }
 
         boolean teacherConflict = lectureScheduleRepository.existsTeacherConflict(
-                teacherId, slot.getDayOfWeek(), slot.getStartTime(), slot.getEndTime(), startDate, endDate, excludeId);
+                teacherId,
+                slot.getDayOfWeek(),
+                slot.getStartTime(),
+                slot.getEndTime(),
+                normalizedStart,
+                normalizedEnd,
+                excludeId);
         if (teacherConflict) {
             throw new GeneralException("Teacher already has a lecture at this time.");
         }

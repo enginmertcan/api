@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ILectureRepository extends JpaRepository<Lecture,Integer> {
-
-
+    boolean existsByTeacher_Id(Integer teacherId);
 }

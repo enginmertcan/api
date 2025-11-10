@@ -3,6 +3,8 @@ package com.mertcanengin.api.service.impl;
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Role;
+import com.mertcanengin.api.repository.IEnrollmentRepository;
+import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.IUserRepository;
 import com.mertcanengin.api.service.IRefreshTokenService;
 import com.mertcanengin.api.service.IUserService;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,13 +23,19 @@ public class UserService implements IUserService {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final IRefreshTokenService refreshTokenService;
+    private final ILectureRepository lectureRepository;
+    private final IEnrollmentRepository enrollmentRepository;
 
     public UserService(IUserRepository userRepository,
                        PasswordEncoder passwordEncoder,
-                       IRefreshTokenService refreshTokenService) {
+                       IRefreshTokenService refreshTokenService,
+                       ILectureRepository lectureRepository,
+                       IEnrollmentRepository enrollmentRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.refreshTokenService = refreshTokenService;
+        this.lectureRepository = lectureRepository;
+        this.enrollmentRepository = enrollmentRepository;
     }
 
     @Override
@@ -91,10 +100,27 @@ public class UserService implements IUserService {
 
     @Override
     public void delete(Integer id) {
-        if(!userRepository.existsById(id)){
-            throw new GeneralException("User not found with id: " + id);
-        }
+        User user = getById(id);
+        ensureUserHasNoDependencies(user);
         refreshTokenService.revokeUserTokens(id);
         userRepository.deleteById(id);
+    }
+
+    private void ensureUserHasNoDependencies(User user) {
+        boolean hasLectures = lectureRepository.existsByTeacher_Id(user.getId());
+        boolean hasEnrollments = enrollmentRepository.existsByStudent_Id(user.getId());
+
+        if (hasLectures || hasEnrollments) {
+            List<String> reasons = new ArrayList<>();
+            if (hasLectures) {
+                reasons.add("they are assigned as a teacher to existing lectures");
+            }
+            if (hasEnrollments) {
+                reasons.add("they are enrolled in existing lectures");
+            }
+            throw new GeneralException("User cannot be deleted because " +
+                    String.join(" and ", reasons) +
+                    ". Remove the related records first.");
+        }
     }
 }

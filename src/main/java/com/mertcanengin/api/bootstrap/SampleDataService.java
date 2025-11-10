@@ -56,7 +56,10 @@ public class SampleDataService {
     private static final List<UserSeed> TEACHER_SEEDS = List.of(
             new UserSeed("80000000001", "Ayse", "Kaplan", Gender.FEMALE),
             new UserSeed("80000000002", "Mehmet", "Arslan", Gender.MALE),
-            new UserSeed("80000000003", "Selin", "Demir", Gender.FEMALE)
+            new UserSeed("80000000003", "Selin", "Demir", Gender.FEMALE),
+            new UserSeed("80000000004", "Tolga", "Sener", Gender.MALE),
+            new UserSeed("80000000005", "Banu", "Ergul", Gender.FEMALE),
+            new UserSeed("80000000006", "Hakan", "Kurt", Gender.MALE)
     );
 
     private static final List<UserSeed> STUDENT_SEEDS = List.of(
@@ -71,14 +74,24 @@ public class SampleDataService {
             new UserSeed("70000000009", "Eda", "Can", Gender.FEMALE),
             new UserSeed("70000000010", "Umut", "Ergin", Gender.MALE),
             new UserSeed("70000000011", "Nil", "Sahin", Gender.FEMALE),
-            new UserSeed("70000000012", "Baris", "Guler", Gender.MALE)
+            new UserSeed("70000000012", "Baris", "Guler", Gender.MALE),
+            new UserSeed("70000000013", "Sena", "Oz", Gender.FEMALE),
+            new UserSeed("70000000014", "Can", "Bora", Gender.MALE),
+            new UserSeed("70000000015", "Ipek", "Esen", Gender.FEMALE),
+            new UserSeed("70000000016", "Tuna", "Demirel", Gender.MALE),
+            new UserSeed("70000000017", "Melis", "Aslan", Gender.FEMALE),
+            new UserSeed("70000000018", "Gokhan", "Kar", Gender.MALE),
+            new UserSeed("70000000019", "Azra", "Bilgin", Gender.FEMALE),
+            new UserSeed("70000000020", "Kaan", "Tamer", Gender.MALE)
     );
 
     private static final List<ClassroomSeed> CLASSROOM_SEEDS = List.of(
             new ClassroomSeed("Orion Lab", "B1 Katı", 34),
             new ClassroomSeed("Atlas Hub", "A Blok 2. Kat", 28),
             new ClassroomSeed("Nova Studio", "C Blok", 24),
-            new ClassroomSeed("Vega Hall", "Konferans Alanı", 60)
+            new ClassroomSeed("Vega Hall", "Konferans Alanı", 60),
+            new ClassroomSeed("Helix Studio", "D Blok", 26),
+            new ClassroomSeed("Vertex Lab", "Innovation Center", 32)
     );
 
     private static final List<SlotSeed> SLOT_SEEDS = List.of(
@@ -87,7 +100,9 @@ public class SampleDataService {
             new SlotSeed(DayOfWeek.WEDNESDAY, LocalTime.of(13, 0), LocalTime.of(15, 0)),
             new SlotSeed(DayOfWeek.THURSDAY, LocalTime.of(10, 0), LocalTime.of(12, 0)),
             new SlotSeed(DayOfWeek.FRIDAY, LocalTime.of(14, 0), LocalTime.of(16, 0)),
-            new SlotSeed(DayOfWeek.SATURDAY, LocalTime.of(9, 0), LocalTime.of(12, 0))
+            new SlotSeed(DayOfWeek.SATURDAY, LocalTime.of(9, 0), LocalTime.of(12, 0)),
+            new SlotSeed(DayOfWeek.MONDAY, LocalTime.of(16, 0), LocalTime.of(18, 0)),
+            new SlotSeed(DayOfWeek.TUESDAY, LocalTime.of(14, 0), LocalTime.of(16, 0))
     );
 
     private static final List<LectureSeed> LECTURE_SEEDS = List.of(
@@ -134,6 +149,50 @@ public class SampleDataService {
                             new GradeComponentSeed("Midterm", 20, 100),
                             new GradeComponentSeed("Final", 35, 100)
                     )
+            ),
+            new LectureSeed(
+                    "DevOps Automation",
+                    "CI/CD orkestrasyonu, pipeline güvenliği ve altyapı otomasyonu pratikleri.",
+                    3,
+                    "80000000004",
+                    List.of(
+                            new GradeComponentSeed("Labs", 30, 100),
+                            new GradeComponentSeed("Midterm", 30, 100),
+                            new GradeComponentSeed("Final", 40, 100)
+                    )
+            ),
+            new LectureSeed(
+                    "UI/UX Research",
+                    "Kullanıcı araştırması, kullanılabilirlik testleri ve Figma üzerinden prototipleme.",
+                    4,
+                    "80000000005",
+                    List.of(
+                            new GradeComponentSeed("Case Study", 35, 100),
+                            new GradeComponentSeed("Midterm", 25, 100),
+                            new GradeComponentSeed("Final", 40, 100)
+                    )
+            ),
+            new LectureSeed(
+                    "Cyber Security",
+                    "Sızma testleri, OWASP Top 10 ve Zero Trust prensipleriyle savunma stratejileri.",
+                    5,
+                    "80000000006",
+                    List.of(
+                            new GradeComponentSeed("Lab Exercises", 30, 100),
+                            new GradeComponentSeed("Midterm", 30, 100),
+                            new GradeComponentSeed("Final", 40, 100)
+                    )
+            ),
+            new LectureSeed(
+                    "Data Visualization",
+                    "D3.js ve Apache Superset ile veri hikayeleştirme ve dashboard tasarımı.",
+                    4,
+                    "80000000003",
+                    List.of(
+                            new GradeComponentSeed("Project", 40, 100),
+                            new GradeComponentSeed("Midterm", 20, 100),
+                            new GradeComponentSeed("Final", 40, 100)
+                    )
             )
     );
 
@@ -143,15 +202,26 @@ public class SampleDataService {
             new LectureScheduleSeed("Data Mining", "Atlas Hub", 1, -7, 60),
             new LectureScheduleSeed("Cloud Architecture", "Vega Hall", 5, -21, 84),
             new LectureScheduleSeed("Cloud Architecture", "Vega Hall", 2, -21, 84),
-            new LectureScheduleSeed("Mobile Development", "Nova Studio", 4, -10, 65)
+            new LectureScheduleSeed("Mobile Development", "Nova Studio", 4, -10, 65),
+            new LectureScheduleSeed("DevOps Automation", "Helix Studio", 6, -12, 80),
+            new LectureScheduleSeed("DevOps Automation", "Vertex Lab", 7, -12, 80),
+            new LectureScheduleSeed("UI/UX Research", "Nova Studio", 3, -8, 75),
+            new LectureScheduleSeed("UI/UX Research", "Helix Studio", 1, -8, 75),
+            new LectureScheduleSeed("Cyber Security", "Vega Hall", 2, -18, 90),
+            new LectureScheduleSeed("Cyber Security", "Helix Studio", 0, -18, 90),
+            new LectureScheduleSeed("Data Visualization", "Orion Lab", 7, -6, 60),
+            new LectureScheduleSeed("Data Visualization", "Vertex Lab", 6, -6, 60)
     );
 
     private static final List<SampleAccount> SAMPLE_ACCOUNTS = List.of(
             new SampleAccount("ADMIN", ADMIN_SEED.identityNo(), DEMO_PASSWORD, "Tüm panellere erişim"),
             new SampleAccount("TEACHER", TEACHER_SEEDS.get(0).identityNo(), DEMO_PASSWORD, "Ders/grade yönetimi"),
             new SampleAccount("TEACHER", TEACHER_SEEDS.get(1).identityNo(), DEMO_PASSWORD, "Analytics ve kayıt onayı"),
+            new SampleAccount("TEACHER", TEACHER_SEEDS.get(3).identityNo(), DEMO_PASSWORD, "DevOps & altyapı dersleri"),
             new SampleAccount("STUDENT", STUDENT_SEEDS.get(0).identityNo(), DEMO_PASSWORD, "Kayıt ve transcript testleri"),
-            new SampleAccount("STUDENT", STUDENT_SEEDS.get(1).identityNo(), DEMO_PASSWORD, "Waitlist senaryosu")
+            new SampleAccount("STUDENT", STUDENT_SEEDS.get(1).identityNo(), DEMO_PASSWORD, "Waitlist senaryosu"),
+            new SampleAccount("STUDENT", STUDENT_SEEDS.get(4).identityNo(), DEMO_PASSWORD, "Notlandırma senaryosu"),
+            new SampleAccount("STUDENT", STUDENT_SEEDS.get(10).identityNo(), DEMO_PASSWORD, "Kalabalık sınıf testi")
     );
 
     private final IUserService userService;
@@ -425,8 +495,9 @@ public class SampleDataService {
             List<Enrollment> actives = created.stream()
                     .filter(enrollment -> enrollment.getStatus() == EnrollmentStatus.ACTIVE)
                     .toList();
-            if (!actives.isEmpty()) {
-                Enrollment target = actives.get(0);
+            int completionCount = Math.min(2, actives.size());
+            for (int i = 0; i < completionCount; i++) {
+                Enrollment target = actives.get(i);
                 applyGrades(target, components.getOrDefault(lecture.getId(), List.of()));
                 enrollmentService.complete(target.getId(), null);
             }

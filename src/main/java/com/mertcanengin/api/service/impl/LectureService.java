@@ -74,4 +74,9 @@ public class LectureService implements ILectureService {
         }
         lectureRepository.deleteById(id);
     }
+
+    @Override
+    public List<Lecture> getByTeacher(Integer teacherId) {
+        return lectureRepository.findAllByTeacher_Id(teacherId);
+    }
 }

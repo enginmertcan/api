@@ -7,4 +7,5 @@ import java.util.List;
 public interface ILectureScheduleService extends IService<LectureSchedule> {
     LectureSchedule schedule(LectureSchedule lectureSchedule);
     List<LectureSchedule> getByLecture(Integer lectureId);
+    List<LectureSchedule> getByLectures(List<Integer> lectureIds);
 }

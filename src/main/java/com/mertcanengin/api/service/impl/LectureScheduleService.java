@@ -161,4 +161,12 @@ public class LectureScheduleService implements ILectureScheduleService {
     public List<LectureSchedule> getByLecture(Integer lectureId) {
         return lectureScheduleRepository.findAllByLectureId(lectureId);
     }
+
+    @Override
+    public List<LectureSchedule> getByLectures(List<Integer> lectureIds) {
+        if (lectureIds == null || lectureIds.isEmpty()) {
+            return List.of();
+        }
+        return lectureScheduleRepository.findAllByLecture_IdIn(lectureIds);
+    }
 }

@@ -57,6 +57,7 @@ public interface ILectureScheduleRepository extends JpaRepository<LectureSchedul
                                   @Param("excludeId") Integer excludeId);
 
     List<LectureSchedule> findAllByLectureId(Integer lectureId);
+    List<LectureSchedule> findAllByLecture_IdIn(List<Integer> lectureIds);
 
     @Query("""
             SELECT COUNT(ls)

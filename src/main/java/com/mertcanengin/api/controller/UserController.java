@@ -4,6 +4,7 @@ import com.mertcanengin.api.dto.UserRequest;
 import com.mertcanengin.api.dto.UserResponse;
 import com.mertcanengin.api.entity.enums.Role;
 import com.mertcanengin.api.mapper.UserMapper;
+import com.mertcanengin.api.security.UserPrincipal;
 import com.mertcanengin.api.service.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,6 +51,12 @@ public class UserController {
     @GetMapping("/{id}")
     ResponseEntity<UserResponse> getUser(@PathVariable Integer id){
         return ResponseEntity.ok(userMapper.toResponse(userService.getById(id)));
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/me")
+    ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal){
+        return ResponseEntity.ok(userMapper.toResponse(principal.getUser()));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

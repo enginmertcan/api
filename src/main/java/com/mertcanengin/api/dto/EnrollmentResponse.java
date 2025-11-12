@@ -34,6 +34,18 @@ public record EnrollmentResponse(
         LocalDateTime approvedAt,
 
         @Schema(description = "Tamamlama zamanı")
-        LocalDateTime completedAt
+        LocalDateTime completedAt,
+
+        @Schema(description = "Toplam devamsızlık sayısı", example = "2")
+        Integer absenceCount,
+
+        @Schema(description = "Devamsızlık limiti", example = "5")
+        Integer absenceLimit,
+
+        @Schema(description = "Öğrenci adı", example = "Ayşe")
+        String studentName,
+
+        @Schema(description = "Öğrenci soyadı", example = "Yılmaz")
+        String studentSurname
 ) {
 }

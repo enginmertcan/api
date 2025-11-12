@@ -6,6 +6,7 @@ import com.mertcanengin.api.entity.Lecture;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.EnrollmentStatus;
 import com.mertcanengin.api.entity.enums.Role;
+import com.mertcanengin.api.repository.IEnrollmentAttendanceRepository;
 import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.IUserRepository;
@@ -26,13 +27,16 @@ public class EnrollmentService implements IEnrollmentService {
     private final IEnrollmentRepository enrollmentRepository;
     private final ILectureRepository lectureRepository;
     private final IUserRepository userRepository;
+    private final IEnrollmentAttendanceRepository enrollmentAttendanceRepository;
 
     public EnrollmentService(IEnrollmentRepository enrollmentRepository,
                              ILectureRepository lectureRepository,
-                             IUserRepository userRepository) {
+                             IUserRepository userRepository,
+                             IEnrollmentAttendanceRepository enrollmentAttendanceRepository) {
         this.enrollmentRepository = enrollmentRepository;
         this.lectureRepository = lectureRepository;
         this.userRepository = userRepository;
+        this.enrollmentAttendanceRepository = enrollmentAttendanceRepository;
     }
 
     @Override
@@ -50,6 +54,8 @@ public class EnrollmentService implements IEnrollmentService {
                 existing.setEnrolledAt(LocalDateTime.now());
                 existing.setFinalGrade(null);
                 existing.setWaitlistPosition(null);
+                existing.setAbsenceCount(0);
+                enrollmentAttendanceRepository.deleteAllByEnrollment_Id(existing.getId());
                 return enrollmentRepository.save(existing);
             }
             return existing;
@@ -60,6 +66,7 @@ public class EnrollmentService implements IEnrollmentService {
         enrollment.setStudent(student);
         enrollment.setStatus(EnrollmentStatus.PENDING_APPROVAL);
         enrollment.setEnrolledAt(LocalDateTime.now());
+        enrollment.setAbsenceCount(0);
         return enrollmentRepository.save(enrollment);
     }
 

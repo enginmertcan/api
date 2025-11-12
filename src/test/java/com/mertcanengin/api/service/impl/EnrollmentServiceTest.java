@@ -6,6 +6,7 @@ import com.mertcanengin.api.entity.Lecture;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.EnrollmentStatus;
 import com.mertcanengin.api.entity.enums.Role;
+import com.mertcanengin.api.repository.IEnrollmentAttendanceRepository;
 import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.IUserRepository;
@@ -33,6 +34,8 @@ class EnrollmentServiceTest {
     private ILectureRepository lectureRepository;
     @Mock
     private IUserRepository userRepository;
+    @Mock
+    private IEnrollmentAttendanceRepository enrollmentAttendanceRepository;
 
     @InjectMocks
     private EnrollmentService enrollmentService;
@@ -64,6 +67,25 @@ class EnrollmentServiceTest {
         assertEquals(99, enrollment.getId());
         assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
         verify(enrollmentRepository).save(any(Enrollment.class));
+    }
+
+    @Test
+    void reactivatingDroppedEnrollmentResetsAbsence() {
+        when(lectureRepository.findById(lecture.getId())).thenReturn(Optional.of(lecture));
+        when(userRepository.findById(student.getId())).thenReturn(Optional.of(student));
+
+        Enrollment dropped = enrollmentPending();
+        dropped.setStatus(EnrollmentStatus.DROPPED);
+        dropped.setAbsenceCount(3);
+        when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
+                .thenReturn(Optional.of(dropped));
+        when(enrollmentRepository.save(dropped)).thenReturn(dropped);
+
+        Enrollment enrollment = enrollmentService.enroll(lecture.getId(), student.getId());
+
+        assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
+        assertEquals(0, enrollment.getAbsenceCount());
+        verify(enrollmentAttendanceRepository).deleteAllByEnrollment_Id(dropped.getId());
     }
 
     @Test

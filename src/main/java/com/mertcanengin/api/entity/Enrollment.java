@@ -63,6 +63,13 @@ public class Enrollment extends AuditableEntity {
     @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EnrollmentGrade> grades = new ArrayList<>();
 
+    @Column(name = "absence_count", nullable = false)
+    private Integer absenceCount = 0;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "enrollment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EnrollmentAttendance> attendanceRecords = new ArrayList<>();
+
     public Integer getLectureId() {
         return lecture != null ? lecture.getId() : null;
     }

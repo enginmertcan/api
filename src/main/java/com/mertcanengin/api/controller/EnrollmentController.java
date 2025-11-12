@@ -1,8 +1,10 @@
 package com.mertcanengin.api.controller;
 
 import com.mertcanengin.api.dto.*;
+import com.mertcanengin.api.mapper.EnrollmentAttendanceMapper;
 import com.mertcanengin.api.mapper.EnrollmentGradeMapper;
 import com.mertcanengin.api.mapper.EnrollmentMapper;
+import com.mertcanengin.api.service.IEnrollmentAttendanceService;
 import com.mertcanengin.api.service.IEnrollmentGradeService;
 import com.mertcanengin.api.service.IEnrollmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,15 +27,21 @@ public class EnrollmentController {
     private final EnrollmentMapper enrollmentMapper;
     private final IEnrollmentGradeService enrollmentGradeService;
     private final EnrollmentGradeMapper enrollmentGradeMapper;
+    private final IEnrollmentAttendanceService enrollmentAttendanceService;
+    private final EnrollmentAttendanceMapper enrollmentAttendanceMapper;
 
     public EnrollmentController(IEnrollmentService enrollmentService,
                                 EnrollmentMapper enrollmentMapper,
                                 IEnrollmentGradeService enrollmentGradeService,
-                                EnrollmentGradeMapper enrollmentGradeMapper) {
+                                EnrollmentGradeMapper enrollmentGradeMapper,
+                                IEnrollmentAttendanceService enrollmentAttendanceService,
+                                EnrollmentAttendanceMapper enrollmentAttendanceMapper) {
         this.enrollmentService = enrollmentService;
         this.enrollmentMapper = enrollmentMapper;
         this.enrollmentGradeService = enrollmentGradeService;
         this.enrollmentGradeMapper = enrollmentGradeMapper;
+        this.enrollmentAttendanceService = enrollmentAttendanceService;
+        this.enrollmentAttendanceMapper = enrollmentAttendanceMapper;
     }
 
     @PreAuthorize("hasRole('STUDENT')")
@@ -86,6 +94,25 @@ public class EnrollmentController {
     ResponseEntity<List<EnrollmentGradeResponse>> getGrades(@PathVariable Integer id) {
         return ResponseEntity.ok(
                 enrollmentGradeMapper.toResponseList(enrollmentGradeService.getByEnrollment(id))
+        );
+    }
+
+    @PreAuthorize("hasRole('TEACHER')")
+    @PostMapping("/{id}/attendance")
+    ResponseEntity<EnrollmentAttendanceResponse> recordAttendance(@PathVariable Integer id,
+                                                                  @Valid @RequestBody EnrollmentAttendanceRequest request) {
+        return ResponseEntity.ok(
+                enrollmentAttendanceMapper.toResponse(
+                        enrollmentAttendanceService.recordAttendance(id, request.weekOf(), request.attended())
+                )
+        );
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER','STUDENT')")
+    @GetMapping("/{id}/attendance")
+    ResponseEntity<List<EnrollmentAttendanceResponse>> getAttendance(@PathVariable Integer id) {
+        return ResponseEntity.ok(
+                enrollmentAttendanceMapper.toResponseList(enrollmentAttendanceService.getAttendance(id))
         );
     }
 

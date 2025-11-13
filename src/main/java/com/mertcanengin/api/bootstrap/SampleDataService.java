@@ -369,9 +369,11 @@ public class SampleDataService {
         user.setIdentityNo(seed.identityNo());
         user.setName(seed.name());
         user.setSurname(seed.surname());
+        user.setEmail(seed.identityNo() + "@demo.lecture-portal.local");
         user.setGender(seed.gender());
         user.setRole(role);
         user.setPassword(DEMO_PASSWORD);
+        user.setEmailVerified(true);
         return userService.save(user);
     }
 

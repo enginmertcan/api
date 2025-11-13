@@ -1,6 +1,7 @@
 package com.mertcanengin.api.domain.user.policy;
 
 import com.mertcanengin.api.domain.user.password.UserPasswordPolicy;
+import com.mertcanengin.api.domain.user.validation.EmailUniquenessChecker;
 import com.mertcanengin.api.domain.user.validation.IdentityNumberUniquenessChecker;
 import com.mertcanengin.api.domain.user.validation.IdentityNumberValidator;
 import com.mertcanengin.api.entity.User;
@@ -23,6 +24,8 @@ class DefaultUserCreationPolicyTest {
     @Mock
     private IdentityNumberUniquenessChecker identityNumberUniquenessChecker;
     @Mock
+    private EmailUniquenessChecker emailUniquenessChecker;
+    @Mock
     private UserPasswordPolicy userPasswordPolicy;
 
     @InjectMocks
@@ -34,6 +37,7 @@ class DefaultUserCreationPolicyTest {
     void setUp() {
         user = new User();
         user.setIdentityNo("12345678901");
+        user.setEmail("user@example.com");
         user.setPassword("Aa1!aaaa");
     }
 
@@ -45,6 +49,7 @@ class DefaultUserCreationPolicyTest {
 
         verify(identityNumberValidator).validate(user.getIdentityNo());
         verify(identityNumberUniquenessChecker).ensureUnique(user.getIdentityNo());
+        verify(emailUniquenessChecker).ensureUnique(user.getEmail(), null);
         assertEquals("encoded", user.getPassword());
     }
 }

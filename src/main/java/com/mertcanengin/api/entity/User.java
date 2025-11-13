@@ -31,6 +31,9 @@ public class User extends AuditableEntity {
     @Column
     private String surname;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column
     @Enumerated(EnumType.STRING)
     private Gender gender;
@@ -42,4 +45,7 @@ public class User extends AuditableEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
+
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified = false;
 }

@@ -3,6 +3,7 @@ package com.mertcanengin.api.dto;
 import com.mertcanengin.api.entity.enums.Gender;
 import com.mertcanengin.api.entity.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -22,6 +23,11 @@ public record RegisterRequest(
         @Schema(description = "Kullanıcının soyadı", example = "Yılmaz")
         @NotBlank
         String surname,
+
+        @Schema(description = "Kullanıcının e-posta adresi", example = "user@example.com")
+        @NotBlank
+        @Email
+        String email,
 
         @Schema(description = "Cinsiyet bilgisi", example = "FEMALE")
         @NotNull

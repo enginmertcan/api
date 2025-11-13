@@ -18,6 +18,7 @@ public interface UserMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
+    @Mapping(target = "emailVerified", expression = "java(request.emailVerified() != null ? request.emailVerified() : Boolean.TRUE)")
     User toEntity(UserRequest request);
 
     @Mapping(target = "id", ignore = true)
@@ -26,6 +27,7 @@ public interface UserMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "role", expression = "java(resolveRole(request))")
+    @Mapping(target = "emailVerified", constant = "false")
     User fromRegister(RegisterRequest request);
 
     UserResponse toResponse(User user);

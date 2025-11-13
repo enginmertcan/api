@@ -16,7 +16,7 @@ class UserMapperTest {
     @Test
     void fromRegisterShouldMapToStudentRoleByDefault() {
         RegisterRequest request =
-                new RegisterRequest("12345678901", "Ada", "Lovelace", Gender.FEMALE, null, "secret1");
+                new RegisterRequest("12345678901", "Ada", "Lovelace", "ada@example.com", Gender.FEMALE, null, "secret1");
 
         User user = mapper.fromRegister(request);
 
@@ -31,7 +31,7 @@ class UserMapperTest {
     @Test
     void fromRegisterShouldRespectTeacherRole() {
         RegisterRequest request =
-                new RegisterRequest("22222222222", "Alan", "Turing", Gender.MALE, Role.TEACHER, "secret2");
+                new RegisterRequest("22222222222", "Alan", "Turing", "alan@example.com", Gender.MALE, Role.TEACHER, "secret2");
 
         User user = mapper.fromRegister(request);
 

@@ -17,10 +17,16 @@ public record UserResponse(
         @Schema(example = "Yılmaz")
         String surname,
 
+        @Schema(description = "E-posta adresi", example = "user@example.com")
+        String email,
+
         @Schema(example = "MALE")
         Gender gender,
 
         @Schema(example = "STUDENT")
-        Role role
+        Role role,
+
+        @Schema(description = "E-posta doğrulama durumu", example = "true")
+        Boolean emailVerified
 ) {
 }

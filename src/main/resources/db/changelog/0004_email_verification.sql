@@ -20,7 +20,6 @@ CREATE TABLE email_verification_tokens (
     code VARCHAR(10) NOT NULL,
     expires_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     consumed BOOLEAN NOT NULL DEFAULT FALSE,
-    created_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_email_verification_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

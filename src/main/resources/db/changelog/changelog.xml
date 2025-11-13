@@ -8,4 +8,5 @@
     <include file="0002_update_numeric_columns.sql" relativeToChangelogFile="true"/>
     <include file="0003_attendance_tracking.sql" relativeToChangelogFile="true"/>
     <include file="0004_email_verification.sql" relativeToChangelogFile="true"/>
+    <include file="0005_email_verification_audit.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

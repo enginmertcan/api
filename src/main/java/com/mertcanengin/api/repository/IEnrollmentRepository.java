@@ -31,6 +31,7 @@ public interface IEnrollmentRepository extends JpaRepository<Enrollment, Integer
     Optional<Enrollment> findFirstByLecture_IdAndStatusOrderByWaitlistPositionAsc(Integer lectureId, EnrollmentStatus status);
     List<Enrollment> findAllByStudent_Id(Integer studentId);
     boolean existsByStudent_Id(Integer studentId);
+    boolean existsByLecture_IdAndStudent_IdAndStatus(Integer lectureId, Integer studentId, EnrollmentStatus status);
 
     interface EnrollmentStatusCountProjection {
         EnrollmentStatus getStatus();

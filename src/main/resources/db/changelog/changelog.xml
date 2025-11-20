@@ -10,4 +10,5 @@
     <include file="0004_email_verification.sql" relativeToChangelogFile="true"/>
     <include file="0005_email_verification_audit.sql" relativeToChangelogFile="true"/>
     <include file="0006_security_enhancements.sql" relativeToChangelogFile="true"/>
+    <include file="0007_exam_module.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -1,21 +1,23 @@
 package com.mertcanengin.api.service;
 
+import com.mertcanengin.api.entity.common.AuditTrailEntityListener;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ActivityLogRecorder {
 
-    private static ActivityLogService delegate;
+    private final ActivityLogService activityLogService;
 
     public ActivityLogRecorder(ActivityLogService activityLogService) {
-        delegate = activityLogService;
+        this.activityLogService = activityLogService;
+        AuditTrailEntityListener.registerRecorder(this);
     }
 
-    public static void record(String action, Object entity) {
-        if (delegate == null || entity == null) {
+    public void record(String action, Object entity) {
+        if (entity == null) {
             return;
         }
-        delegate.record(action, entity);
+        activityLogService.record(action, entity);
     }
 }
 

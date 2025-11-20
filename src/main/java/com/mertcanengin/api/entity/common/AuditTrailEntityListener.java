@@ -1,6 +1,7 @@
 package com.mertcanengin.api.entity.common;
 
 import com.mertcanengin.api.service.ActivityLogRecorder;
+
 import jakarta.persistence.PostPersist;
 import jakarta.persistence.PostRemove;
 import jakarta.persistence.PostUpdate;

@@ -30,21 +30,21 @@ import com.mertcanengin.api.security.JwtAuthenticationFilter;
 public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
-            "/api/auth/login",
-            "/api/auth/register",
-            "/api/auth/verify-email",
-            "/api/auth/resend-verification",
-            "/api/auth/refresh",
-            "/api/auth/password/forgot",
-            "/api/auth/password/reset",
-            "/v3/api-docs",
-            "/v3/api-docs/**",
-            "/swagger-ui",
-            "/swagger-ui/**",
-            "/swagger-ui.html",
-            "/actuator/health",
-            "/error",
-            "/error/**"
+        "/api/auth/login",
+        "/api/auth/register",
+        "/api/auth/verify-email",
+        "/api/auth/resend-verification",
+        "/api/auth/refresh",
+        "/api/auth/password/forgot",
+        "/api/auth/password/reset",
+        "/v3/api-docs",
+        "/v3/api-docs/**",
+        "/swagger-ui",
+        "/swagger-ui/**",
+        "/swagger-ui.html",
+        "/actuator/health",
+        "/error",
+        "/error/**"
     };
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;

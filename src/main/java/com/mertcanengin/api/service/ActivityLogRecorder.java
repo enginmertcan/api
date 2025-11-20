@@ -1,7 +1,8 @@
 package com.mertcanengin.api.service;
 
-import com.mertcanengin.api.entity.common.AuditTrailEntityListener;
 import org.springframework.stereotype.Component;
+
+import com.mertcanengin.api.entity.common.AuditTrailEntityListener;
 
 @Component
 public class ActivityLogRecorder {

@@ -19,6 +19,8 @@ public interface UserMapper {
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "emailVerified", expression = "java(request.emailVerified() != null ? request.emailVerified() : Boolean.TRUE)")
+    @Mapping(target = "mfaEnabled", ignore = true)
+    @Mapping(target = "preferredMfaChannel", ignore = true)
     User toEntity(UserRequest request);
 
     @Mapping(target = "id", ignore = true)
@@ -28,6 +30,8 @@ public interface UserMapper {
     @Mapping(target = "updatedBy", ignore = true)
     @Mapping(target = "role", expression = "java(resolveRole(request))")
     @Mapping(target = "emailVerified", constant = "false")
+    @Mapping(target = "mfaEnabled", ignore = true)
+    @Mapping(target = "preferredMfaChannel", ignore = true)
     User fromRegister(RegisterRequest request);
 
     UserResponse toResponse(User user);

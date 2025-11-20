@@ -48,4 +48,16 @@ public class User extends AuditableEntity {
 
     @Column(name = "email_verified", nullable = false)
     private boolean emailVerified = false;
+
+    @Column(name = "mfa_enabled", nullable = false)
+    private boolean mfaEnabled = false;
+
+    @Column(name = "preferred_mfa_channel")
+    private String preferredMfaChannel = "EMAIL";
+
+    public String getFullName() {
+        String first = name != null ? name : "";
+        String last = surname != null ? surname : "";
+        return (first + " " + last).trim();
+    }
 }

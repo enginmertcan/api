@@ -10,6 +10,18 @@ public record AuthRequest(
 
         @Schema(description = "Parola", example = "P@ssw0rd!")
         @NotBlank
-        String password
+        String password,
+
+        @Schema(description = "MFA doğrulama kodu")
+        String mfaCode,
+
+        @Schema(description = "MFA challenge kimliği")
+        String challengeId,
+
+        @Schema(description = "İstemci cihaz kimliği", example = "device-123")
+        String deviceId,
+
+        @Schema(description = "İstemci cihaz adı", example = "Chrome on Windows")
+        String deviceName
 ) {
 }

@@ -7,6 +7,9 @@ public record AuthResponse(
         String accessToken,
 
         @Schema(description = "Yenileme tokeni")
-        String refreshToken
+        String refreshToken,
+
+        @Schema(description = "Oturumu temsil eden cihaz kimliği")
+        String deviceId
 ) {
 }

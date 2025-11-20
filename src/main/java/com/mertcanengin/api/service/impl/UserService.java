@@ -11,6 +11,7 @@ import com.mertcanengin.api.service.IRefreshTokenService;
 import com.mertcanengin.api.service.IUserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,19 +39,22 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getUsersByRole(Role role) {
         return userRepository.findAllByRole(role);
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     public List<User> getPotentialUsers(List<Integer> ids) {
         if (ids.isEmpty()) {
-            return getUsersByRole(Role.STUDENT);
+            return userRepository.findAllByRole(Role.STUDENT);
         }
         return userRepository.findAllByRoleAndIdIsNotIn(Role.STUDENT, ids);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public User save(User user) {
         if (user == null) {
             throw new GeneralException("User payload cannot be empty.");
@@ -58,36 +62,62 @@ public class UserService implements IUserService {
         if (user.getId() == null) {
             userCreationPolicy.apply(user);
         } else {
-            User existing = getById(user.getId());
+            User existing = loadUserInternal(user.getId());
             userUpdatePolicy.apply(user, existing);
         }
         return userRepository.save(user);
     }
 
     @Override
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     public User getById(Integer id) {
-        Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty()){
-            throw new GeneralException("User not found with id: " + id);
-        }
-        return user.get();
+        return loadUserInternal(id);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAll() {
         return userRepository.findAll();
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<User> getAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
     @Override
+    @PreAuthorize("hasRole('ADMIN')")
     public void delete(Integer id) {
-        User user = getById(id);
+        User user = loadUserInternal(id);
         userDeletionGuard.ensureCanDelete(user);
         refreshTokenService.revokeUserTokens(id);
         userRepository.deleteById(id);
+    }
+
+    @Override
+    @PreAuthorize("permitAll()")
+    public User register(User user) {
+        if (user == null) {
+            throw new GeneralException("User payload cannot be empty.");
+        }
+        userCreationPolicy.apply(user);
+        return userRepository.save(user);
+    }
+
+    @Override
+    @PreAuthorize("hasRole('ADMIN') or #userId == principal.user.id")
+    public User updateMfaPreference(Integer userId, boolean enabled) {
+        User user = loadUserInternal(userId);
+        user.setMfaEnabled(enabled);
+        return userRepository.save(user);
+    }
+
+    private User loadUserInternal(Integer id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isEmpty()) {
+            throw new GeneralException("User not found with id: " + id);
+        }
+        return user.get();
     }
 }

@@ -33,6 +33,51 @@ public class MailService {
     }
 
     public void sendVerificationEmail(String to, String code) {
+        sendPlainTextEmail(
+                to,
+                "Lecture Portal - E-posta Doğrulama",
+                """
+                        Merhaba,
+
+                        Hesabını etkinleştirmek için doğrulama kodun: %s
+                        Kod 15 dakika boyunca geçerlidir.
+
+                        Teşekkürler,
+                        Lecture Portal
+                        """.formatted(code)
+        );
+    }
+
+    public void sendMfaCodeEmail(String to, String code, long ttlMinutes) {
+        sendPlainTextEmail(
+                to,
+                "Lecture Portal - MFA Doğrulama Kodu",
+                """
+                        Güvenli giriş için MFA kodun: %s
+                        Kod %s dakika boyunca geçerlidir.
+                        """.formatted(code, ttlMinutes)
+        );
+    }
+
+    public void sendPasswordResetEmail(String to, String token, long ttlMinutes) {
+        sendPlainTextEmail(
+                to,
+                "Lecture Portal - Parola Sıfırlama",
+                """
+                        Parolanı sıfırlamak için aşağıdaki kodu kullan:
+
+                        %s
+
+                        Kod %d dakika boyunca geçerlidir. Eğer bu isteği sen oluşturmadıysan, hesabını korumak için bizimle iletişime geç.
+                        """.formatted(token, ttlMinutes)
+        );
+    }
+
+    public void sendActivityAlertEmail(String to, String subject, String body) {
+        sendPlainTextEmail(to, subject, body);
+    }
+
+    private void sendPlainTextEmail(String to, String subject, String content) {
         if (apiKey == null || apiKey.isBlank()) {
             log.error("SendGrid API anahtarı tanımlı değil.");
             throw new GeneralException("Mail servisi yapılandırılmadı. Yönetici ile iletişime geç.");
@@ -45,16 +90,8 @@ public class MailService {
         var body = SendGridRequest.builder()
                 .from(fromAddress)
                 .to(to)
-                .subject("Lecture Portal - E-posta Doğrulama")
-                .textContent("""
-                        Merhaba,
-
-                        Hesabını etkinleştirmek için doğrulama kodun: %s
-                        Kod 15 dakika boyunca geçerlidir.
-
-                        Teşekkürler,
-                        Lecture Portal
-                        """.formatted(code))
+                .subject(subject)
+                .textContent(content)
                 .build();
 
         HttpEntity<SendGridRequest> request = new HttpEntity<>(body, headers);
@@ -62,11 +99,11 @@ public class MailService {
             ResponseEntity<Void> response = restTemplate.postForEntity(SENDGRID_ENDPOINT, request, Void.class);
             if (response.getStatusCode().is4xxClientError() || response.getStatusCode().is5xxServerError()) {
                 log.error("SendGrid responsed with status {} for {}", response.getStatusCode(), to);
-                throw new GeneralException("Doğrulama e-postası gönderilemedi. Lütfen daha sonra tekrar deneyin.");
+                throw new GeneralException("E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.");
             }
         } catch (RestClientException ex) {
-            log.error("Verification email could not be sent to {}", to, ex);
-            throw new GeneralException("Doğrulama e-postası gönderilemedi. Lütfen daha sonra tekrar deneyin.");
+            log.error("Email could not be sent to {}", to, ex);
+            throw new GeneralException("E-posta gönderilemedi. Lütfen daha sonra tekrar deneyin.");
         }
     }
 

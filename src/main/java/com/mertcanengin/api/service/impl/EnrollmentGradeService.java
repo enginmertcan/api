@@ -9,6 +9,7 @@ import com.mertcanengin.api.repository.IEnrollmentGradeRepository;
 import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.IGradeComponentRepository;
 import com.mertcanengin.api.service.IEnrollmentGradeService;
+import com.mertcanengin.api.service.MailService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,16 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
     private final IEnrollmentRepository enrollmentRepository;
     private final IGradeComponentRepository gradeComponentRepository;
 
+    private final MailService mailService;
+
     public EnrollmentGradeService(IEnrollmentGradeRepository enrollmentGradeRepository,
                                   IEnrollmentRepository enrollmentRepository,
-                                  IGradeComponentRepository gradeComponentRepository) {
+                                  IGradeComponentRepository gradeComponentRepository,
+                                  MailService mailService) {
         this.enrollmentGradeRepository = enrollmentGradeRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.gradeComponentRepository = gradeComponentRepository;
+        this.mailService = mailService;
     }
 
     @Override
@@ -61,6 +66,7 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
 
         EnrollmentGrade saved = enrollmentGradeRepository.save(grade);
         recalculateFinalGrade(enrollment);
+        notifyStudent(enrollment, component, saved);
         return saved;
     }
 
@@ -130,5 +136,22 @@ public class EnrollmentGradeService implements IEnrollmentGradeService {
     @Override
     public List<EnrollmentGrade> getByEnrollment(Integer enrollmentId) {
         return enrollmentGradeRepository.findAllByEnrollmentId(enrollmentId);
+    }
+
+    private void notifyStudent(Enrollment enrollment, GradeComponent component, EnrollmentGrade grade) {
+        if (enrollment.getStudent() == null || enrollment.getStudent().getEmail() == null) {
+            return;
+        }
+        String subject = "Lecture Portal - Not Güncellemesi";
+        String body = """
+                %s dersindeki %s bileşeni için notun güncellendi.
+                Yeni not: %s / %s
+                """.formatted(
+                enrollment.getLecture().getName(),
+                component.getName(),
+                grade.getScore(),
+                component.getMaxScore()
+        );
+        mailService.sendActivityAlertEmail(enrollment.getStudent().getEmail(), subject, body);
     }
 }

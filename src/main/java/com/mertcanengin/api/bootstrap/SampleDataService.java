@@ -18,7 +18,6 @@ import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.IGradeComponentRepository;
 import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.ILectureScheduleRepository;
-import com.mertcanengin.api.repository.IRefreshTokenRepository;
 import com.mertcanengin.api.repository.IScheduleSlotRepository;
 import com.mertcanengin.api.repository.IUserRepository;
 import com.mertcanengin.api.service.IEnrollmentGradeService;
@@ -241,7 +240,6 @@ public class SampleDataService {
     private final IGradeComponentRepository gradeComponentRepository;
     private final IEnrollmentRepository enrollmentRepository;
     private final IEnrollmentGradeRepository enrollmentGradeRepository;
-    private final IRefreshTokenRepository refreshTokenRepository;
 
     public SampleDataService(IUserService userService,
                              ILectureService lectureService,
@@ -258,8 +256,7 @@ public class SampleDataService {
                              ILectureScheduleRepository lectureScheduleRepository,
                              IGradeComponentRepository gradeComponentRepository,
                              IEnrollmentRepository enrollmentRepository,
-                             IEnrollmentGradeRepository enrollmentGradeRepository,
-                             IRefreshTokenRepository refreshTokenRepository) {
+                             IEnrollmentGradeRepository enrollmentGradeRepository) {
         this.userService = userService;
         this.lectureService = lectureService;
         this.classroomService = classroomService;
@@ -276,7 +273,6 @@ public class SampleDataService {
         this.gradeComponentRepository = gradeComponentRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.enrollmentGradeRepository = enrollmentGradeRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Transactional
@@ -374,7 +370,7 @@ public class SampleDataService {
         user.setRole(role);
         user.setPassword(DEMO_PASSWORD);
         user.setEmailVerified(true);
-        return userService.save(user);
+        return userService.register(user);
     }
 
     private List<Classroom> seedClassrooms() {
@@ -527,7 +523,6 @@ public class SampleDataService {
         lectureRepository.deleteAllInBatch();
         classroomRepository.deleteAllInBatch();
         scheduleSlotRepository.deleteAllInBatch();
-        refreshTokenRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
     }
 

@@ -9,4 +9,6 @@ public interface IUserService extends IService<User>{
 
     List<User> getUsersByRole(Role role);
     List<User> getPotentialUsers(List<Integer> ids);
+    User register(User user);
+    User updateMfaPreference(Integer userId, boolean enabled);
 }

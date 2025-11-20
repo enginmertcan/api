@@ -2,12 +2,12 @@ spring:
   datasource:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://aws-1-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require&prepareThreshold=0}
     username: ${SPRING_DATASOURCE_USERNAME:postgres.hqcvezmtckpjlgpsnfwi}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
+    password: ${SPRING_DATASOURCE_PASSWORD:0afd8845ac9a}
     driver-class-name: org.postgresql.Driver
     hikari:
       connection-init-sql: 'SET statement_timeout TO 0; SET search_path TO lecture_api, public'
-      maximum-pool-size: ${SPRING_DATASOURCE_MAX_POOL_SIZE:5}
-      minimum-idle: ${SPRING_DATASOURCE_MIN_IDLE:1}
+      maximum-pool-size: ${SPRING_DATASOURCE_MAX_POOL_SIZE:1}
+      minimum-idle: ${SPRING_DATASOURCE_MIN_IDLE:0}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -19,6 +19,13 @@ spring:
     enabled: true
     default-schema: lecture_api
     liquibase-schema: public
+  data:
+    redis:
+      host: ${SPRING_REDIS_HOST:localhost}
+      port: ${SPRING_REDIS_PORT:6379}
+      password: ${SPRING_REDIS_PASSWORD:}
+      ssl: ${SPRING_REDIS_SSL:false}
+      timeout: ${SPRING_REDIS_TIMEOUT:5000}
   mail:
     host: ${SPRING_MAIL_HOST:localhost}
     port: ${SPRING_MAIL_PORT:1025}
@@ -52,8 +59,18 @@ app:
     bootstrap-on-startup: true
   mail:
     from: ${APP_MAIL_FROM:no-reply@lecture-portal.local}
+  notifications:
+    academic-ops-email: ${APP_NOTIFICATIONS_ACADEMIC_OPS_EMAIL:ops@lecture-portal.local}
 
 security:
   jwt:
     secret: ${JWT_SECRET:change-me}
     expiration: ${JWT_EXPIRATION:3600000}
+    refresh-expiration-minutes: ${JWT_REFRESH_EXPIRATION_MINUTES:10080}
+  mfa:
+    challenge-ttl-seconds: ${SECURITY_MFA_CHALLENGE_TTL:300}
+    code-length: ${SECURITY_MFA_CODE_LENGTH:6}
+  password-reset:
+    token-ttl-minutes: ${SECURITY_PASSWORD_RESET_TTL:30}
+  sessions:
+    max-devices-per-user: ${SECURITY_SESSIONS_MAX_DEVICES:10}

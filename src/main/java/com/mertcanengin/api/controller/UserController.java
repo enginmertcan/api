@@ -1,5 +1,6 @@
 package com.mertcanengin.api.controller;
 
+import com.mertcanengin.api.dto.MfaPreferenceRequest;
 import com.mertcanengin.api.dto.UserRequest;
 import com.mertcanengin.api.dto.UserResponse;
 import com.mertcanengin.api.entity.enums.Role;
@@ -12,7 +13,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +31,6 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     ResponseEntity<Page<UserResponse>> getUsers(@RequestParam(defaultValue = "0") Integer page,
                                         @RequestParam(defaultValue = "10") Integer pageSize){
@@ -41,31 +40,34 @@ public class UserController {
         );
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping("/by-role")
     ResponseEntity<List<UserResponse>> getUsersByRole(@RequestParam Role role){
         return ResponseEntity.ok(userMapper.toResponseList(userService.getUsersByRole(role)));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     @GetMapping("/{id}")
     ResponseEntity<UserResponse> getUser(@PathVariable Integer id){
         return ResponseEntity.ok(userMapper.toResponse(userService.getById(id)));
     }
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal){
         return ResponseEntity.ok(userMapper.toResponse(principal.getUser()));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("/me/mfa")
+    ResponseEntity<UserResponse> updateMfaPreference(@AuthenticationPrincipal UserPrincipal principal,
+                                                     @Valid @RequestBody MfaPreferenceRequest request) {
+        return ResponseEntity.ok(
+                userMapper.toResponse(userService.updateMfaPreference(principal.getUser().getId(), request.enabled()))
+        );
+    }
+
     @PostMapping
     ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request){
         return ResponseEntity.ok(userMapper.toResponse(userService.save(userMapper.toEntity(request))));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping
     ResponseEntity<Void> deleteUser(@RequestParam Integer id){
         userService.delete(id);

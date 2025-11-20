@@ -1,14 +1,7 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.dto.MfaPreferenceRequest;
-import com.mertcanengin.api.dto.UserRequest;
-import com.mertcanengin.api.dto.UserResponse;
-import com.mertcanengin.api.entity.enums.Role;
-import com.mertcanengin.api.mapper.UserMapper;
-import com.mertcanengin.api.security.UserPrincipal;
-import com.mertcanengin.api.service.IUserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,7 +9,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import com.mertcanengin.api.dto.MfaPreferenceRequest;
+import com.mertcanengin.api.dto.UserRequest;
+import com.mertcanengin.api.dto.UserResponse;
+import com.mertcanengin.api.entity.enums.Role;
+import com.mertcanengin.api.mapper.UserMapper;
+import com.mertcanengin.api.security.UserPrincipal;
+import com.mertcanengin.api.service.IUserService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -32,44 +34,44 @@ public class UserController {
 
 
     @GetMapping
-    ResponseEntity<Page<UserResponse>> getUsers(@RequestParam(defaultValue = "0") Integer page,
-                                        @RequestParam(defaultValue = "10") Integer pageSize){
+    public ResponseEntity<Page<UserResponse>> getUsers(@RequestParam(defaultValue = "0") Integer page,
+                                                       @RequestParam(defaultValue = "10") Integer pageSize) {
         return ResponseEntity.ok(
-                userService.getAll(PageRequest.of(page,pageSize, Sort.by("id")))
+                userService.getAll(PageRequest.of(page, pageSize, Sort.by("id")))
                         .map(userMapper::toResponse)
         );
     }
 
     @GetMapping("/by-role")
-    ResponseEntity<List<UserResponse>> getUsersByRole(@RequestParam Role role){
+    public ResponseEntity<List<UserResponse>> getUsersByRole(@RequestParam Role role) {
         return ResponseEntity.ok(userMapper.toResponseList(userService.getUsersByRole(role)));
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<UserResponse> getUser(@PathVariable Integer id){
+    public ResponseEntity<UserResponse> getUser(@PathVariable Integer id) {
         return ResponseEntity.ok(userMapper.toResponse(userService.getById(id)));
     }
 
     @GetMapping("/me")
-    ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal){
+    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal UserPrincipal principal) {
         return ResponseEntity.ok(userMapper.toResponse(principal.getUser()));
     }
 
     @PatchMapping("/me/mfa")
-    ResponseEntity<UserResponse> updateMfaPreference(@AuthenticationPrincipal UserPrincipal principal,
-                                                     @Valid @RequestBody MfaPreferenceRequest request) {
+    public ResponseEntity<UserResponse> updateMfaPreference(@AuthenticationPrincipal UserPrincipal principal,
+                                                            @Valid @RequestBody MfaPreferenceRequest request) {
         return ResponseEntity.ok(
                 userMapper.toResponse(userService.updateMfaPreference(principal.getUser().getId(), request.enabled()))
         );
     }
 
     @PostMapping
-    ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request){
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request) {
         return ResponseEntity.ok(userMapper.toResponse(userService.save(userMapper.toEntity(request))));
     }
 
     @DeleteMapping
-    ResponseEntity<Void> deleteUser(@RequestParam Integer id){
+    public ResponseEntity<Void> deleteUser(@RequestParam Integer id) {
         userService.delete(id);
         return ResponseEntity.ok().build();
     }

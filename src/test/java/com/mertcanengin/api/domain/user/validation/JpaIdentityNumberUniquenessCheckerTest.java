@@ -1,16 +1,15 @@
 package com.mertcanengin.api.domain.user.validation;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.repository.IUserRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.repository.IUserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class JpaIdentityNumberUniquenessCheckerTest {
@@ -23,13 +22,13 @@ class JpaIdentityNumberUniquenessCheckerTest {
 
     @Test
     void ensureUniqueThrowsWhenExists() {
-        when(userRepository.existsByIdentityNo("123")).thenReturn(true);
-        assertThrows(GeneralException.class, () -> checker.ensureUnique("123"));
+        Mockito.when(userRepository.existsByIdentityNo("123")).thenReturn(true);
+        Assertions.assertThrows(GeneralException.class, () -> checker.ensureUnique("123"));
     }
 
     @Test
     void ensureUniqueDoesNothingWhenAvailable() {
-        when(userRepository.existsByIdentityNo("123")).thenReturn(false);
-        assertDoesNotThrow(() -> checker.ensureUnique("123"));
+        Mockito.when(userRepository.existsByIdentityNo("123")).thenReturn(false);
+        Assertions.assertDoesNotThrow(() -> checker.ensureUnique("123"));
     }
 }

@@ -1,20 +1,19 @@
 package com.mertcanengin.api.domain.lecture.teacher;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.entity.User;
-import com.mertcanengin.api.entity.enums.Role;
-import com.mertcanengin.api.repository.IUserRepository;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.entity.enums.Role;
+import com.mertcanengin.api.repository.IUserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class JpaLectureTeacherResolverTest {
@@ -35,26 +34,26 @@ class JpaLectureTeacherResolverTest {
 
     @Test
     void resolveThrowsWhenIdMissing() {
-        assertThrows(GeneralException.class, () -> resolver.resolve(null));
+        Assertions.assertThrows(GeneralException.class, () -> resolver.resolve(null));
     }
 
     @Test
     void resolveThrowsWhenNotFound() {
-        when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
-        assertThrows(GeneralException.class, () -> resolver.resolve(user.getId()));
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.empty());
+        Assertions.assertThrows(GeneralException.class, () -> resolver.resolve(user.getId()));
     }
 
     @Test
     void resolveThrowsWhenNotTeacher() {
         user.setRole(Role.STUDENT);
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
-        assertThrows(GeneralException.class, () -> resolver.resolve(user.getId()));
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        Assertions.assertThrows(GeneralException.class, () -> resolver.resolve(user.getId()));
     }
 
     @Test
     void resolveReturnsTeacher() {
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
         User resolved = resolver.resolve(user.getId());
-        assertEquals(user, resolved);
+        Assertions.assertEquals(user, resolved);
     }
 }

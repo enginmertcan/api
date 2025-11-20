@@ -1,12 +1,13 @@
 package com.mertcanengin.api.mapper;
 
-import com.mertcanengin.api.dto.ScheduleSlotRequest;
-import com.mertcanengin.api.dto.ScheduleSlotResponse;
-import com.mertcanengin.api.entity.ScheduleSlot;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
+import com.mertcanengin.api.dto.ScheduleSlotRequest;
+import com.mertcanengin.api.dto.ScheduleSlotResponse;
+import com.mertcanengin.api.entity.ScheduleSlot;
 
 @Mapper(componentModel = "spring")
 public interface ScheduleSlotMapper {

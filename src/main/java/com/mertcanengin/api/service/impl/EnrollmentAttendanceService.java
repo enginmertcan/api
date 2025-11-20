@@ -1,5 +1,11 @@
 package com.mertcanengin.api.service.impl;
 
+import java.time.LocalDate;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.domain.attendance.AttendancePolicy;
 import com.mertcanengin.api.entity.Enrollment;
@@ -11,11 +17,6 @@ import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.security.SecurityUtils;
 import com.mertcanengin.api.service.IEnrollmentAttendanceService;
 import com.mertcanengin.api.service.IEnrollmentService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class EnrollmentAttendanceService implements IEnrollmentAttendanceService {

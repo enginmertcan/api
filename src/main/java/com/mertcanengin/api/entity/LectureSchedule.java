@@ -1,13 +1,14 @@
 package com.mertcanengin.api.entity;
 
+import java.time.LocalDate;
+
 import com.mertcanengin.api.entity.common.AuditableEntity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "lecture_schedules")

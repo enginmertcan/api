@@ -1,14 +1,15 @@
 package com.mertcanengin.api.service.impl;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.entity.ScheduleSlot;
-import com.mertcanengin.api.repository.IScheduleSlotRepository;
-import com.mertcanengin.api.service.IScheduleSlotService;
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.entity.ScheduleSlot;
+import com.mertcanengin.api.repository.IScheduleSlotRepository;
+import com.mertcanengin.api.service.IScheduleSlotService;
 
 @Service
 public class ScheduleSlotService implements IScheduleSlotService {

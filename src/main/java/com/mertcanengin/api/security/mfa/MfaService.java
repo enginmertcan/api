@@ -1,20 +1,21 @@
 package com.mertcanengin.api.security.mfa;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.entity.User;
-import com.mertcanengin.api.service.MailService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Service;
-
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.service.MailService;
 
 @Service
 public class MfaService {

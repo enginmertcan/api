@@ -1,8 +1,7 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.dto.ApiErrorResponse;
-import jakarta.validation.ConstraintViolationException;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -10,7 +9,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.util.List;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.dto.ApiErrorResponse;
+
+import jakarta.validation.ConstraintViolationException;
 
 @ControllerAdvice
 public class GeneralExceptionController {

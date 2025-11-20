@@ -1,9 +1,10 @@
 package com.mertcanengin.api.domain.lecture.policy;
 
+import org.springframework.stereotype.Component;
+
 import com.mertcanengin.api.domain.lecture.teacher.LectureTeacherResolver;
 import com.mertcanengin.api.domain.lecture.validation.LectureValidator;
 import com.mertcanengin.api.entity.Lecture;
-import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultLectureCreationPolicy implements LectureCreationPolicy {

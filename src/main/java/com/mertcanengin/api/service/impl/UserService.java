@@ -1,5 +1,13 @@
 package com.mertcanengin.api.service.impl;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.domain.user.policy.UserCreationPolicy;
 import com.mertcanengin.api.domain.user.policy.UserDeletionGuard;
@@ -9,13 +17,6 @@ import com.mertcanengin.api.entity.enums.Role;
 import com.mertcanengin.api.repository.IUserRepository;
 import com.mertcanengin.api.service.IRefreshTokenService;
 import com.mertcanengin.api.service.IUserService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {

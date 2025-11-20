@@ -1,9 +1,10 @@
 package com.mertcanengin.api.dto;
 
-import com.mertcanengin.api.entity.enums.EnrollmentStatus;
-import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.time.LocalDateTime;
+
+import com.mertcanengin.api.entity.enums.EnrollmentStatus;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 public record EnrollmentResponse(
         @Schema(example = "501")

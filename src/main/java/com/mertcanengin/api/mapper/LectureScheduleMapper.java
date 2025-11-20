@@ -1,20 +1,21 @@
 package com.mertcanengin.api.mapper;
 
-import com.mertcanengin.api.dto.LectureScheduleRequest;
-import com.mertcanengin.api.dto.LectureScheduleResponse;
-import com.mertcanengin.api.entity.LectureSchedule;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
+import com.mertcanengin.api.dto.LectureScheduleRequest;
+import com.mertcanengin.api.dto.LectureScheduleResponse;
+import com.mertcanengin.api.entity.LectureSchedule;
 
 @Mapper(componentModel = "spring")
 public interface LectureScheduleMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "lecture", expression = "java(com.mertcanengin.api.mapper.MapperHelpers.mapLecture(request.lectureId()))")
-    @Mapping(target = "classroom", expression = "java(com.mertcanengin.api.mapper.MapperHelpers.mapClassroom(request.classroomId()))")
-    @Mapping(target = "scheduleSlot", expression = "java(com.mertcanengin.api.mapper.MapperHelpers.mapScheduleSlot(request.scheduleSlotId()))")
+    @Mapping(target = "lecture", expression = "java(MapperHelpers.mapLecture(request.lectureId()))")
+    @Mapping(target = "classroom", expression = "java(MapperHelpers.mapClassroom(request.classroomId()))")
+    @Mapping(target = "scheduleSlot", expression = "java(MapperHelpers.mapScheduleSlot(request.scheduleSlotId()))")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "createdBy", ignore = true)

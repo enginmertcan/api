@@ -1,15 +1,16 @@
 package com.mertcanengin.api.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mertcanengin.api.entity.ActivityLog;
-import com.mertcanengin.api.repository.IActivityLogRepository;
+import java.lang.reflect.Method;
+import java.time.LocalDateTime;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mertcanengin.api.entity.ActivityLog;
+import com.mertcanengin.api.repository.IActivityLogRepository;
 
 @Service
 public class ActivityLogService {

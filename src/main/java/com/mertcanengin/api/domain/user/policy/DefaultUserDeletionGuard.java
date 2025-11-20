@@ -1,13 +1,14 @@
 package com.mertcanengin.api.domain.user.policy;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.ILectureRepository;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class DefaultUserDeletionGuard implements UserDeletionGuard {

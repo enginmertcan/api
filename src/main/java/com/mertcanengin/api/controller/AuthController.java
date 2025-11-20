@@ -1,5 +1,30 @@
 package com.mertcanengin.api.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.mertcanengin.api.dto.ActiveSessionResponse;
 import com.mertcanengin.api.dto.AuthRequest;
 import com.mertcanengin.api.dto.AuthResponse;
@@ -23,33 +48,10 @@ import com.mertcanengin.api.security.session.RefreshSession;
 import com.mertcanengin.api.service.EmailVerificationService;
 import com.mertcanengin.api.service.IRefreshTokenService;
 import com.mertcanengin.api.service.IUserService;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -172,8 +174,9 @@ public class AuthController {
     }
 
     @GetMapping("/sessions")
-    public ResponseEntity<List<ActiveSessionResponse>> activeSessions(@AuthenticationPrincipal UserPrincipal principal,
-                                                                      @RequestHeader(value = "X-Device-Id", required = false) String currentDeviceId) {
+    public ResponseEntity<List<ActiveSessionResponse>> activeSessions(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestHeader(value = "X-Device-Id", required = false) String currentDeviceId) {
         List<RefreshSession> sessions = refreshTokenService.getActiveSessions(principal.getUser().getId());
         List<ActiveSessionResponse> response = sessions.stream()
                 .map(session -> new ActiveSessionResponse(

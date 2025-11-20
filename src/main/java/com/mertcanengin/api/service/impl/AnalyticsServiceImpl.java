@@ -1,9 +1,19 @@
 package com.mertcanengin.api.service.impl;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.mertcanengin.api.dto.analytics.AnalyticsSummaryResponse;
 import com.mertcanengin.api.dto.analytics.EnrollmentFunnelResponse;
 import com.mertcanengin.api.dto.analytics.TeacherWorkloadResponse;
-import com.mertcanengin.api.entity.Enrollment;
 import com.mertcanengin.api.entity.Lecture;
 import com.mertcanengin.api.entity.LectureSchedule;
 import com.mertcanengin.api.entity.ScheduleSlot;
@@ -13,16 +23,6 @@ import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.ILectureScheduleRepository;
 import com.mertcanengin.api.service.AnalyticsService;
-import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AnalyticsServiceImpl implements AnalyticsService {

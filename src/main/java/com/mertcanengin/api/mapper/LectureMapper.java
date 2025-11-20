@@ -1,14 +1,15 @@
 package com.mertcanengin.api.mapper;
 
-import com.mertcanengin.api.dto.LectureRequest;
-import com.mertcanengin.api.dto.LectureResponse;
-import com.mertcanengin.api.entity.Lecture;
+import java.util.List;
+
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-import java.util.List;
+import com.mertcanengin.api.dto.LectureRequest;
+import com.mertcanengin.api.dto.LectureResponse;
+import com.mertcanengin.api.entity.Lecture;
 
 @Mapper(componentModel = "spring")
 public interface LectureMapper {
@@ -30,8 +31,8 @@ public interface LectureMapper {
     }
 
     @Mapping(target = "teacherId", expression = "java(lecture.getTeacherId())")
-    @Mapping(target = "teacherName", expression = "java(lecture.getTeacher() != null ? lecture.getTeacher().getName() + \" \" + lecture.getTeacher().getSurname() : null)")
-    @Mapping(target = "teacherIdentityNo", expression = "java(lecture.getTeacher() != null ? lecture.getTeacher().getIdentityNo() : null)")
+    @Mapping(target = "teacherName", expression = "java(MapperHelpers.teacherFullName(lecture))")
+    @Mapping(target = "teacherIdentityNo", expression = "java(MapperHelpers.teacherIdentityNo(lecture))")
     LectureResponse toResponse(Lecture lecture);
 
     List<LectureResponse> toResponseList(List<Lecture> lectures);

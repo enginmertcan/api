@@ -1,21 +1,21 @@
 package com.mertcanengin.api.service.impl;
 
+import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.domain.lecture.policy.LectureCreationPolicy;
 import com.mertcanengin.api.entity.Lecture;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.repository.ILectureRepository;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LectureServiceTest {
@@ -31,32 +31,32 @@ class LectureServiceTest {
     @Test
     void saveDelegatesToPolicyAndRepository() {
         Lecture lecture = buildLecture();
-        when(lectureCreationPolicy.prepareForSave(lecture)).thenReturn(lecture);
-        when(lectureRepository.save(lecture)).thenReturn(lecture);
+        Mockito.when(lectureCreationPolicy.prepareForSave(lecture)).thenReturn(lecture);
+        Mockito.when(lectureRepository.save(lecture)).thenReturn(lecture);
 
         Lecture saved = lectureService.save(lecture);
 
-        assertEquals(lecture, saved);
-        verify(lectureCreationPolicy).prepareForSave(lecture);
-        verify(lectureRepository).save(lecture);
+        Assertions.assertEquals(lecture, saved);
+        Mockito.verify(lectureCreationPolicy).prepareForSave(lecture);
+        Mockito.verify(lectureRepository).save(lecture);
     }
 
     @Test
     void saveThrowsWhenPayloadNull() {
-        assertThrows(GeneralException.class, () -> lectureService.save(null));
-        verifyNoInteractions(lectureCreationPolicy, lectureRepository);
+        Assertions.assertThrows(GeneralException.class, () -> lectureService.save(null));
+        Mockito.verifyNoInteractions(lectureCreationPolicy, lectureRepository);
     }
 
     @Test
     void getByIdThrowsWhenMissing() {
-        when(lectureRepository.findById(10)).thenReturn(Optional.empty());
-        assertThrows(GeneralException.class, () -> lectureService.getById(10));
+        Mockito.when(lectureRepository.findById(10)).thenReturn(Optional.empty());
+        Assertions.assertThrows(GeneralException.class, () -> lectureService.getById(10));
     }
 
     @Test
     void getAllUsesRepositoryPaging() {
         lectureService.getAll(PageRequest.of(0, 5));
-        verify(lectureRepository).findAll(PageRequest.of(0, 5));
+        Mockito.verify(lectureRepository).findAll(PageRequest.of(0, 5));
     }
 
     private Lecture buildLecture() {

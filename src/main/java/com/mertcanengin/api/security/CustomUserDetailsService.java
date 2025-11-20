@@ -1,11 +1,12 @@
 package com.mertcanengin.api.security;
 
-import com.mertcanengin.api.entity.User;
-import com.mertcanengin.api.repository.IUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.repository.IUserRepository;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

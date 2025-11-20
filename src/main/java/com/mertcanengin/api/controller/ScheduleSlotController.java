@@ -1,10 +1,5 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.dto.ScheduleSlotRequest;
-import com.mertcanengin.api.dto.ScheduleSlotResponse;
-import com.mertcanengin.api.mapper.ScheduleSlotMapper;
-import com.mertcanengin.api.service.IScheduleSlotService;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,6 +13,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mertcanengin.api.dto.ScheduleSlotRequest;
+import com.mertcanengin.api.dto.ScheduleSlotResponse;
+import com.mertcanengin.api.mapper.ScheduleSlotMapper;
+import com.mertcanengin.api.service.IScheduleSlotService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/schedule-slots")

@@ -1,9 +1,9 @@
 package com.mertcanengin.api.service;
 
-import com.mertcanengin.api.entity.EnrollmentAttendance;
-
 import java.time.LocalDate;
 import java.util.List;
+
+import com.mertcanengin.api.entity.EnrollmentAttendance;
 
 public interface IEnrollmentAttendanceService {
 

@@ -1,8 +1,8 @@
 package com.mertcanengin.api.service;
 
-import com.mertcanengin.api.entity.Enrollment;
-
 import java.util.List;
+
+import com.mertcanengin.api.entity.Enrollment;
 
 public interface IEnrollmentService extends IService<Enrollment> {
     Enrollment enroll(Integer lectureId, Integer studentId);

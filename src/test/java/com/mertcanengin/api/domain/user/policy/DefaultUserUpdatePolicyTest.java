@@ -1,19 +1,17 @@
 package com.mertcanengin.api.domain.user.policy;
 
-import com.mertcanengin.api.domain.user.password.UserPasswordPolicy;
-import com.mertcanengin.api.domain.user.validation.EmailUniquenessChecker;
-import com.mertcanengin.api.entity.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import com.mertcanengin.api.domain.user.password.UserPasswordPolicy;
+import com.mertcanengin.api.domain.user.validation.EmailUniquenessChecker;
+import com.mertcanengin.api.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultUserUpdatePolicyTest {
@@ -45,21 +43,21 @@ class DefaultUserUpdatePolicyTest {
 
         policy.apply(incoming, existing);
 
-        assertEquals("encoded", incoming.getPassword());
-        assertEquals("existing@mail.com", incoming.getEmail());
-        verifyNoInteractions(userPasswordPolicy);
-        verifyNoInteractions(emailUniquenessChecker);
+        Assertions.assertEquals("encoded", incoming.getPassword());
+        Assertions.assertEquals("existing@mail.com", incoming.getEmail());
+        Mockito.verifyNoInteractions(userPasswordPolicy);
+        Mockito.verifyNoInteractions(emailUniquenessChecker);
     }
 
     @Test
     void applyEncodesWhenChanged() {
         incoming.setPassword("Aa1!aaaa");
         incoming.setEmail("new@mail.com");
-        when(userPasswordPolicy.encode("Aa1!aaaa")).thenReturn("newEncoded");
+        Mockito.when(userPasswordPolicy.encode("Aa1!aaaa")).thenReturn("newEncoded");
 
         policy.apply(incoming, existing);
 
-        assertEquals("newEncoded", incoming.getPassword());
-        verify(emailUniquenessChecker).ensureUnique("new@mail.com", existing.getId());
+        Assertions.assertEquals("newEncoded", incoming.getPassword());
+        Mockito.verify(emailUniquenessChecker).ensureUnique("new@mail.com", existing.getId());
     }
 }

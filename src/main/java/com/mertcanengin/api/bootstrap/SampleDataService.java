@@ -1,5 +1,22 @@
 package com.mertcanengin.api.bootstrap;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.mertcanengin.api.dto.bootstrap.SampleAccount;
 import com.mertcanengin.api.dto.bootstrap.SampleDataStatusResponse;
 import com.mertcanengin.api.entity.Classroom;
@@ -20,30 +37,14 @@ import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.ILectureScheduleRepository;
 import com.mertcanengin.api.repository.IScheduleSlotRepository;
 import com.mertcanengin.api.repository.IUserRepository;
+import com.mertcanengin.api.service.IClassroomService;
 import com.mertcanengin.api.service.IEnrollmentGradeService;
 import com.mertcanengin.api.service.IEnrollmentService;
 import com.mertcanengin.api.service.IGradeComponentService;
-import com.mertcanengin.api.service.IClassroomService;
 import com.mertcanengin.api.service.ILectureScheduleService;
 import com.mertcanengin.api.service.ILectureService;
 import com.mertcanengin.api.service.IScheduleSlotService;
 import com.mertcanengin.api.service.IUserService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 public class SampleDataService {

@@ -1,9 +1,10 @@
 package com.mertcanengin.api.domain.user.validation;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.repository.IUserRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.repository.IUserRepository;
 
 @Component
 public class JpaEmailUniquenessChecker implements EmailUniquenessChecker {

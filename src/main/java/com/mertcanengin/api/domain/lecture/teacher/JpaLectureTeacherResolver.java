@@ -1,10 +1,11 @@
 package com.mertcanengin.api.domain.lecture.teacher;
 
+import org.springframework.stereotype.Component;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Role;
 import com.mertcanengin.api.repository.IUserRepository;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JpaLectureTeacherResolver implements LectureTeacherResolver {

@@ -1,5 +1,19 @@
 package com.mertcanengin.api.service.impl;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.entity.Enrollment;
 import com.mertcanengin.api.entity.Lecture;
@@ -10,20 +24,6 @@ import com.mertcanengin.api.repository.IEnrollmentAttendanceRepository;
 import com.mertcanengin.api.repository.IEnrollmentRepository;
 import com.mertcanengin.api.repository.ILectureRepository;
 import com.mertcanengin.api.repository.IUserRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EnrollmentServiceTest {
@@ -57,101 +57,101 @@ class EnrollmentServiceTest {
     @Test
     void enrollCreatesPendingRecord() {
         setupHappyPath();
-        when(enrollmentRepository.save(any(Enrollment.class))).thenAnswer(inv -> {
+        Mockito.when(enrollmentRepository.save(Mockito.any(Enrollment.class))).thenAnswer(inv -> {
             Enrollment e = inv.getArgument(0);
             e.setId(99);
             return e;
         });
 
         Enrollment enrollment = enrollmentService.enroll(lecture.getId(), student.getId());
-        assertEquals(99, enrollment.getId());
-        assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
-        verify(enrollmentRepository).save(any(Enrollment.class));
+        Assertions.assertEquals(99, enrollment.getId());
+        Assertions.assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
+        Mockito.verify(enrollmentRepository).save(Mockito.any(Enrollment.class));
     }
 
     @Test
     void reactivatingDroppedEnrollmentResetsAbsence() {
-        when(lectureRepository.findById(lecture.getId())).thenReturn(Optional.of(lecture));
-        when(userRepository.findById(student.getId())).thenReturn(Optional.of(student));
+        Mockito.when(lectureRepository.findById(lecture.getId())).thenReturn(Optional.of(lecture));
+        Mockito.when(userRepository.findById(student.getId())).thenReturn(Optional.of(student));
 
         Enrollment dropped = enrollmentPending();
         dropped.setStatus(EnrollmentStatus.DROPPED);
         dropped.setAbsenceCount(3);
-        when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
+        Mockito.when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
                 .thenReturn(Optional.of(dropped));
-        when(enrollmentRepository.save(dropped)).thenReturn(dropped);
+        Mockito.when(enrollmentRepository.save(dropped)).thenReturn(dropped);
 
         Enrollment enrollment = enrollmentService.enroll(lecture.getId(), student.getId());
 
-        assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
-        assertEquals(0, enrollment.getAbsenceCount());
-        verify(enrollmentAttendanceRepository).deleteAllByEnrollment_Id(dropped.getId());
+        Assertions.assertEquals(EnrollmentStatus.PENDING_APPROVAL, enrollment.getStatus());
+        Assertions.assertEquals(0, enrollment.getAbsenceCount());
+        Mockito.verify(enrollmentAttendanceRepository).deleteAllByEnrollment_Id(dropped.getId());
     }
 
     @Test
     void approveMovesToActiveWhenSeatAvailable() {
         Enrollment pending = enrollmentPending();
-        when(enrollmentRepository.findById(pending.getId())).thenReturn(Optional.of(pending));
-        when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
+        Mockito.when(enrollmentRepository.findById(pending.getId())).thenReturn(Optional.of(pending));
+        Mockito.when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
                 .thenReturn(0L);
-        when(enrollmentRepository.save(pending)).thenReturn(pending);
+        Mockito.when(enrollmentRepository.save(pending)).thenReturn(pending);
 
         Enrollment approved = enrollmentService.approve(pending.getId());
-        assertEquals(EnrollmentStatus.ACTIVE, approved.getStatus());
-        assertNull(approved.getWaitlistPosition());
+        Assertions.assertEquals(EnrollmentStatus.ACTIVE, approved.getStatus());
+        Assertions.assertNull(approved.getWaitlistPosition());
     }
 
     @Test
     void approveMovesToWaitlistWhenFull() {
         Enrollment pending = enrollmentPending();
-        when(enrollmentRepository.findById(pending.getId())).thenReturn(Optional.of(pending));
-        when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
+        Mockito.when(enrollmentRepository.findById(pending.getId())).thenReturn(Optional.of(pending));
+        Mockito.when(enrollmentRepository.countByLecture_IdAndStatus(lecture.getId(), EnrollmentStatus.ACTIVE))
                 .thenReturn((long) lecture.getCapacity());
-        when(enrollmentRepository.findAllByLecture_IdAndStatusOrderByWaitlistPositionAsc(
+        Mockito.when(enrollmentRepository.findAllByLecture_IdAndStatusOrderByWaitlistPositionAsc(
                 lecture.getId(), EnrollmentStatus.WAITING)).thenReturn(java.util.Collections.emptyList());
-        when(enrollmentRepository.save(pending)).thenReturn(pending);
+        Mockito.when(enrollmentRepository.save(pending)).thenReturn(pending);
 
         Enrollment waitlisted = enrollmentService.approve(pending.getId());
-        assertEquals(EnrollmentStatus.WAITING, waitlisted.getStatus());
-        assertEquals(1, waitlisted.getWaitlistPosition());
+        Assertions.assertEquals(EnrollmentStatus.WAITING, waitlisted.getStatus());
+        Assertions.assertEquals(1, waitlisted.getWaitlistPosition());
     }
 
     @Test
     void dropFailsWhenCompleted() {
         Enrollment enrollment = activeEnrollment();
         enrollment.setStatus(EnrollmentStatus.COMPLETED);
-        when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
-        assertThrows(GeneralException.class, () -> enrollmentService.drop(enrollment.getId()));
+        Mockito.when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
+        Assertions.assertThrows(GeneralException.class, () -> enrollmentService.drop(enrollment.getId()));
     }
 
     @Test
     void completeFailsWhenGradeMissing() {
         Enrollment enrollment = activeEnrollment();
-        when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
-        assertThrows(GeneralException.class, () -> enrollmentService.complete(enrollment.getId(), null));
+        Mockito.when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
+        Assertions.assertThrows(GeneralException.class, () -> enrollmentService.complete(enrollment.getId(), null));
     }
 
     @Test
     void completeUsesProvidedGrade() {
         Enrollment enrollment = activeEnrollment();
-        when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
-        when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
+        Mockito.when(enrollmentRepository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
+        Mockito.when(enrollmentRepository.save(enrollment)).thenReturn(enrollment);
         Enrollment completed = enrollmentService.complete(enrollment.getId(), 85.0);
-        assertEquals(EnrollmentStatus.COMPLETED, completed.getStatus());
-        assertEquals(BigDecimal.valueOf(85.0).setScale(2), completed.getFinalGrade());
-        assertTrue(completed.isPassed());
+        Assertions.assertEquals(EnrollmentStatus.COMPLETED, completed.getStatus());
+        Assertions.assertEquals(BigDecimal.valueOf(85.0).setScale(2), completed.getFinalGrade());
+        Assertions.assertTrue(completed.isPassed());
     }
 
     @Test
     void pagingDelegatesToRepository() {
         enrollmentService.getAll(PageRequest.of(0, 5));
-        verify(enrollmentRepository).findAll(PageRequest.of(0, 5));
+        Mockito.verify(enrollmentRepository).findAll(PageRequest.of(0, 5));
     }
 
     private void setupHappyPath() {
-        when(lectureRepository.findById(lecture.getId())).thenReturn(Optional.of(lecture));
-        when(userRepository.findById(student.getId())).thenReturn(Optional.of(student));
-        when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
+        Mockito.when(lectureRepository.findById(lecture.getId())).thenReturn(Optional.of(lecture));
+        Mockito.when(userRepository.findById(student.getId())).thenReturn(Optional.of(student));
+        Mockito.when(enrollmentRepository.findByLecture_IdAndStudent_Id(lecture.getId(), student.getId()))
                 .thenReturn(Optional.empty());
     }
 

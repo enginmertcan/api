@@ -2,6 +2,7 @@ package com.mertcanengin.api.dto;
 
 import com.mertcanengin.api.entity.enums.Gender;
 import com.mertcanengin.api.entity.enums.Role;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record UserResponse(

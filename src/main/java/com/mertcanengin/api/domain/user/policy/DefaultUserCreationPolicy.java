@@ -1,11 +1,12 @@
 package com.mertcanengin.api.domain.user.policy;
 
+import org.springframework.stereotype.Component;
+
 import com.mertcanengin.api.domain.user.password.UserPasswordPolicy;
 import com.mertcanengin.api.domain.user.validation.EmailUniquenessChecker;
 import com.mertcanengin.api.domain.user.validation.IdentityNumberUniquenessChecker;
 import com.mertcanengin.api.domain.user.validation.IdentityNumberValidator;
 import com.mertcanengin.api.entity.User;
-import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultUserCreationPolicy implements UserCreationPolicy {

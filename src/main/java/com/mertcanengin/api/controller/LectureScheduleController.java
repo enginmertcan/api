@@ -1,16 +1,9 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.dto.LectureScheduleRequest;
-import com.mertcanengin.api.dto.LectureScheduleResponse;
-import com.mertcanengin.api.entity.Lecture;
-import com.mertcanengin.api.entity.User;
-import com.mertcanengin.api.entity.enums.Role;
-import com.mertcanengin.api.mapper.LectureScheduleMapper;
-import com.mertcanengin.api.security.UserPrincipal;
-import com.mertcanengin.api.service.IEnrollmentService;
-import com.mertcanengin.api.service.ILectureScheduleService;
-import com.mertcanengin.api.service.ILectureService;
-import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -26,9 +19,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import com.mertcanengin.api.dto.LectureScheduleRequest;
+import com.mertcanengin.api.dto.LectureScheduleResponse;
+import com.mertcanengin.api.entity.Lecture;
+import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.entity.enums.Role;
+import com.mertcanengin.api.mapper.LectureScheduleMapper;
+import com.mertcanengin.api.security.UserPrincipal;
+import com.mertcanengin.api.service.IEnrollmentService;
+import com.mertcanengin.api.service.ILectureScheduleService;
+import com.mertcanengin.api.service.ILectureService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/lecture-schedules")

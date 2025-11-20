@@ -1,21 +1,5 @@
 package com.mertcanengin.api.service.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.entity.User;
-import com.mertcanengin.api.repository.IUserRepository;
-import com.mertcanengin.api.security.UserPrincipal;
-import com.mertcanengin.api.security.session.DeviceMetadata;
-import com.mertcanengin.api.security.session.RefreshSession;
-import com.mertcanengin.api.service.IRefreshTokenService;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.Instant;
@@ -26,8 +10,24 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.repository.IUserRepository;
+import com.mertcanengin.api.security.UserPrincipal;
+import com.mertcanengin.api.security.session.DeviceMetadata;
+import com.mertcanengin.api.security.session.RefreshSession;
+import com.mertcanengin.api.service.IRefreshTokenService;
 
 @Service
 public class RefreshTokenService implements IRefreshTokenService {

@@ -1,8 +1,9 @@
 package com.mertcanengin.api.domain.user.validation;
 
-import com.mertcanengin.api.common.GeneralException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.mertcanengin.api.common.GeneralException;
 
 @Component
 public class DefaultIdentityNumberValidator implements IdentityNumberValidator {

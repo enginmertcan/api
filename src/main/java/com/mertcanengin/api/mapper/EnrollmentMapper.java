@@ -1,11 +1,12 @@
 package com.mertcanengin.api.mapper;
 
-import com.mertcanengin.api.dto.EnrollmentResponse;
-import com.mertcanengin.api.entity.Enrollment;
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import java.util.List;
+import com.mertcanengin.api.dto.EnrollmentResponse;
+import com.mertcanengin.api.entity.Enrollment;
 
 @Mapper(componentModel = "spring")
 public interface EnrollmentMapper {

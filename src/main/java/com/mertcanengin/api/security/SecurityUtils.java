@@ -1,12 +1,13 @@
 package com.mertcanengin.api.security;
 
-import com.mertcanengin.api.entity.enums.Role;
+import java.util.Arrays;
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Arrays;
-import java.util.Optional;
+import com.mertcanengin.api.entity.enums.Role;
 
 public final class SecurityUtils {
 

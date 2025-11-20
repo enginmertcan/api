@@ -1,5 +1,8 @@
 package com.mertcanengin.api.mapper;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import com.mertcanengin.api.entity.Classroom;
 import com.mertcanengin.api.entity.GradeComponent;
 import com.mertcanengin.api.entity.Lecture;
@@ -44,5 +47,26 @@ public final class MapperHelpers {
         GradeComponent component = new GradeComponent();
         component.setId(componentId);
         return component;
+    }
+
+    public static BigDecimal scaledDecimal(Double value) {
+        if (value == null) {
+            return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
+        }
+        return BigDecimal.valueOf(value).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public static String teacherFullName(Lecture lecture) {
+        if (lecture == null || lecture.getTeacher() == null) {
+            return null;
+        }
+        return (lecture.getTeacher().getName() + " " + lecture.getTeacher().getSurname()).trim();
+    }
+
+    public static String teacherIdentityNo(Lecture lecture) {
+        if (lecture == null || lecture.getTeacher() == null) {
+            return null;
+        }
+        return lecture.getTeacher().getIdentityNo();
     }
 }

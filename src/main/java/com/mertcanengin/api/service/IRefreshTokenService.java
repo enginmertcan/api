@@ -1,10 +1,11 @@
 package com.mertcanengin.api.service;
 
-import com.mertcanengin.api.security.session.DeviceMetadata;
-import com.mertcanengin.api.security.session.RefreshSession;
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
+import com.mertcanengin.api.security.session.DeviceMetadata;
+import com.mertcanengin.api.security.session.RefreshSession;
 
 public interface IRefreshTokenService {
 

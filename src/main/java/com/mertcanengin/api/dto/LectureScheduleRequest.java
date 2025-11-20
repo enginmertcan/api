@@ -1,8 +1,8 @@
 package com.mertcanengin.api.dto;
 
-import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDate;
+
+import jakarta.validation.constraints.NotNull;
 
 public record LectureScheduleRequest(
         @NotNull

@@ -1,11 +1,12 @@
 package com.mertcanengin.api.domain.user.password;
 
-import com.mertcanengin.api.common.GeneralException;
+import java.util.regex.Pattern;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.regex.Pattern;
+import com.mertcanengin.api.common.GeneralException;
 
 @Component
 public class DefaultUserPasswordPolicy implements UserPasswordPolicy {

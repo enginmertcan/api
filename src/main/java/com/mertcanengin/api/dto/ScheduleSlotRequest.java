@@ -1,10 +1,11 @@
 package com.mertcanengin.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotNull;
-
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.validation.constraints.NotNull;
 
 public record ScheduleSlotRequest(
         @NotNull

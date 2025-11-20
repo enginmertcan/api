@@ -1,5 +1,15 @@
 package com.mertcanengin.api.service.impl;
 
+import java.util.Optional;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.domain.user.policy.UserCreationPolicy;
 import com.mertcanengin.api.domain.user.policy.UserDeletionGuard;
@@ -7,17 +17,6 @@ import com.mertcanengin.api.domain.user.policy.UserUpdatePolicy;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.repository.IUserRepository;
 import com.mertcanengin.api.service.IRefreshTokenService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -39,13 +38,13 @@ class UserServiceTest {
     @Test
     void saveForNewUserUsesCreationPolicy() {
         User user = new User();
-        when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         User saved = userService.save(user);
 
-        assertEquals(user, saved);
-        verify(userCreationPolicy).apply(user);
-        verify(userRepository).save(user);
+        Assertions.assertEquals(user, saved);
+        Mockito.verify(userCreationPolicy).apply(user);
+        Mockito.verify(userRepository).save(user);
     }
 
     @Test
@@ -56,30 +55,30 @@ class UserServiceTest {
         User persisted = new User();
         persisted.setId(1);
 
-        when(userRepository.findById(1)).thenReturn(Optional.of(persisted));
-        when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.findById(1)).thenReturn(Optional.of(persisted));
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         userService.save(user);
 
-        verify(userUpdatePolicy).apply(user, persisted);
+        Mockito.verify(userUpdatePolicy).apply(user, persisted);
     }
 
     @Test
     void saveThrowsWhenUserNull() {
-        assertThrows(GeneralException.class, () -> userService.save(null));
-        verifyNoInteractions(userRepository, userCreationPolicy, userUpdatePolicy);
+        Assertions.assertThrows(GeneralException.class, () -> userService.save(null));
+        Mockito.verifyNoInteractions(userRepository, userCreationPolicy, userUpdatePolicy);
     }
 
     @Test
     void deleteInvokesGuardAndRevokesTokens() {
         User user = new User();
         user.setId(3);
-        when(userRepository.findById(3)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.findById(3)).thenReturn(Optional.of(user));
 
         userService.delete(3);
 
-        verify(userDeletionGuard).ensureCanDelete(user);
-        verify(refreshTokenService).revokeUserTokens(3);
-        verify(userRepository).deleteById(3);
+        Mockito.verify(userDeletionGuard).ensureCanDelete(user);
+        Mockito.verify(refreshTokenService).revokeUserTokens(3);
+        Mockito.verify(userRepository).deleteById(3);
     }
 }

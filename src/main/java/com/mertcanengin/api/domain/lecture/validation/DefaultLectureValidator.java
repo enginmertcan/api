@@ -1,9 +1,10 @@
 package com.mertcanengin.api.domain.lecture.validation;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.entity.Lecture;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.entity.Lecture;
 
 @Component
 public class DefaultLectureValidator implements LectureValidator {

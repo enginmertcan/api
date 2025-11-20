@@ -1,19 +1,18 @@
 package com.mertcanengin.api.domain.user.policy;
 
-import com.mertcanengin.api.common.GeneralException;
-import com.mertcanengin.api.entity.User;
-import com.mertcanengin.api.repository.IEnrollmentRepository;
-import com.mertcanengin.api.repository.ILectureRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
+import com.mertcanengin.api.common.GeneralException;
+import com.mertcanengin.api.entity.User;
+import com.mertcanengin.api.repository.IEnrollmentRepository;
+import com.mertcanengin.api.repository.ILectureRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultUserDeletionGuardTest {
@@ -36,12 +35,12 @@ class DefaultUserDeletionGuardTest {
 
     @Test
     void ensureCanDeleteThrowsWhenDependencies() {
-        when(lectureRepository.existsByTeacher_Id(user.getId())).thenReturn(true);
-        assertThrows(GeneralException.class, () -> guard.ensureCanDelete(user));
+        Mockito.when(lectureRepository.existsByTeacher_Id(user.getId())).thenReturn(true);
+        Assertions.assertThrows(GeneralException.class, () -> guard.ensureCanDelete(user));
     }
 
     @Test
     void ensureCanDeletePassesWhenNoDependencies() {
-        assertDoesNotThrow(() -> guard.ensureCanDelete(user));
+        Assertions.assertDoesNotThrow(() -> guard.ensureCanDelete(user));
     }
 }

@@ -1,14 +1,15 @@
 package com.mertcanengin.api.mapper;
 
+import java.util.List;
+
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
 import com.mertcanengin.api.dto.RegisterRequest;
 import com.mertcanengin.api.dto.UserRequest;
 import com.mertcanengin.api.dto.UserResponse;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Role;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

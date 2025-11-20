@@ -1,15 +1,16 @@
 package com.mertcanengin.api.service;
 
+import java.security.SecureRandom;
+import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.entity.EmailVerificationToken;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.repository.IEmailVerificationTokenRepository;
 import com.mertcanengin.api.repository.IUserRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.security.SecureRandom;
-import java.time.LocalDateTime;
 
 @Service
 public class EmailVerificationService {

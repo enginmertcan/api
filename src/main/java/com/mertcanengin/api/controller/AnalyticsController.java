@@ -1,15 +1,16 @@
 package com.mertcanengin.api.controller;
 
-import com.mertcanengin.api.dto.analytics.AnalyticsSummaryResponse;
-import com.mertcanengin.api.dto.analytics.EnrollmentFunnelResponse;
-import com.mertcanengin.api.dto.analytics.TeacherWorkloadResponse;
-import com.mertcanengin.api.service.AnalyticsService;
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.mertcanengin.api.dto.analytics.AnalyticsSummaryResponse;
+import com.mertcanengin.api.dto.analytics.EnrollmentFunnelResponse;
+import com.mertcanengin.api.dto.analytics.TeacherWorkloadResponse;
+import com.mertcanengin.api.service.AnalyticsService;
 
 @RestController
 @RequestMapping("/api/analytics")

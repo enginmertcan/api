@@ -1,13 +1,13 @@
 package com.mertcanengin.api.mapper;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+
 import com.mertcanengin.api.dto.RegisterRequest;
 import com.mertcanengin.api.entity.User;
 import com.mertcanengin.api.entity.enums.Gender;
 import com.mertcanengin.api.entity.enums.Role;
-import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class UserMapperTest {
 
@@ -20,12 +20,12 @@ class UserMapperTest {
 
         User user = mapper.fromRegister(request);
 
-        assertThat(user.getIdentityNo()).isEqualTo("12345678901");
-        assertThat(user.getName()).isEqualTo("Ada");
-        assertThat(user.getSurname()).isEqualTo("Lovelace");
-        assertThat(user.getGender()).isEqualTo(Gender.FEMALE);
-        assertThat(user.getPassword()).isEqualTo("secret1");
-        assertThat(user.getRole()).isEqualTo(Role.STUDENT);
+        Assertions.assertThat(user.getIdentityNo()).isEqualTo("12345678901");
+        Assertions.assertThat(user.getName()).isEqualTo("Ada");
+        Assertions.assertThat(user.getSurname()).isEqualTo("Lovelace");
+        Assertions.assertThat(user.getGender()).isEqualTo(Gender.FEMALE);
+        Assertions.assertThat(user.getPassword()).isEqualTo("secret1");
+        Assertions.assertThat(user.getRole()).isEqualTo(Role.STUDENT);
     }
 
     @Test
@@ -35,6 +35,6 @@ class UserMapperTest {
 
         User user = mapper.fromRegister(request);
 
-        assertThat(user.getRole()).isEqualTo(Role.TEACHER);
+        Assertions.assertThat(user.getRole()).isEqualTo(Role.TEACHER);
     }
 }

@@ -1,12 +1,13 @@
 package com.mertcanengin.api.repository;
 
-import com.mertcanengin.api.entity.RefreshToken;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
+import com.mertcanengin.api.entity.RefreshToken;
 
 public interface IRefreshTokenRepository extends JpaRepository<RefreshToken, Integer> {
     Optional<RefreshToken> findByToken(String token);

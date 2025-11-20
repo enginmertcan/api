@@ -1,13 +1,14 @@
 package com.mertcanengin.api.entity;
 
+import java.math.BigDecimal;
+
 import com.mertcanengin.api.entity.common.AuditableEntity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "enrollment_grades",

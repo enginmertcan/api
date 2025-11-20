@@ -1,19 +1,18 @@
 package com.mertcanengin.api.domain.lecture.policy;
 
-import com.mertcanengin.api.domain.lecture.teacher.LectureTeacherResolver;
-import com.mertcanengin.api.domain.lecture.validation.LectureValidator;
-import com.mertcanengin.api.entity.Lecture;
-import com.mertcanengin.api.entity.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.mertcanengin.api.domain.lecture.teacher.LectureTeacherResolver;
+import com.mertcanengin.api.domain.lecture.validation.LectureValidator;
+import com.mertcanengin.api.entity.Lecture;
+import com.mertcanengin.api.entity.User;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultLectureCreationPolicyTest {
@@ -42,12 +41,12 @@ class DefaultLectureCreationPolicyTest {
 
     @Test
     void prepareForSaveValidatesAndAssignsTeacher() {
-        when(lectureTeacherResolver.resolve(lecture.getTeacherId())).thenReturn(teacher);
+        Mockito.when(lectureTeacherResolver.resolve(lecture.getTeacherId())).thenReturn(teacher);
 
         Lecture prepared = policy.prepareForSave(lecture);
 
-        assertEquals(teacher, prepared.getTeacher());
-        verify(lectureValidator).validate(lecture);
-        verify(lectureTeacherResolver).resolve(lecture.getTeacherId());
+        Assertions.assertEquals(teacher, prepared.getTeacher());
+        Mockito.verify(lectureValidator).validate(lecture);
+        Mockito.verify(lectureTeacherResolver).resolve(lecture.getTeacherId());
     }
 }

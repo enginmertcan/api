@@ -1,11 +1,12 @@
 package com.mertcanengin.api.repository;
 
-import com.mertcanengin.api.entity.EmailVerificationToken;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+import com.mertcanengin.api.entity.EmailVerificationToken;
 
 @Repository
 public interface IEmailVerificationTokenRepository extends JpaRepository<EmailVerificationToken, Integer> {

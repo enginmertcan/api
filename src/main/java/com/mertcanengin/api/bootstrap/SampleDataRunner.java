@@ -1,11 +1,12 @@
 package com.mertcanengin.api.bootstrap;
 
-import com.mertcanengin.api.dto.bootstrap.SampleDataStatusResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import com.mertcanengin.api.dto.bootstrap.SampleDataStatusResponse;
 
 @Component
 public class SampleDataRunner implements CommandLineRunner {

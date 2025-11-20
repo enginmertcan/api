@@ -1,8 +1,9 @@
 package com.mertcanengin.api.domain.user.validation;
 
+import org.springframework.stereotype.Component;
+
 import com.mertcanengin.api.common.GeneralException;
 import com.mertcanengin.api.repository.IUserRepository;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JpaIdentityNumberUniquenessChecker implements IdentityNumberUniquenessChecker {
